@@ -141,6 +141,12 @@ p.nominalBounds = new cjs.Rectangle(0,0,2220,110);
 p.nominalBounds = new cjs.Rectangle(0,0,1356,6739);
 
 
+(lib.M3 = function() {
+	this.initialize(img.M3);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,640,360);
+
+
 (lib.back1 = function() {
 	this.initialize(ss["Demo4_atlas_13"]);
 	this.gotoAndStop(1);
@@ -990,7 +996,7 @@ if (reversed == null) { reversed = false; }
 	props.reversed = reversed;
 	cjs.MovieClip.apply(this,[props]);
 
-	this.actionFrames = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17];
+	this.actionFrames = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 	// timeline functions:
 	this.frame_0 = function() {
 		playSound("Audio_intro");
@@ -1629,16 +1635,19 @@ if (reversed == null) { reversed = false; }
 		}
 		
 		// เปลี่ยนเมาส์เป็นรูปมือเวลาชี้ปุ่ม esc_btn
-		this.esc_btn18.cursor = "pointer";
-		
-		// กดแล้วย้อนกลับไปเฟรม 6 (index 5) ทันที
-		this.esc_btn18.on("click", function() {
-		    this.gotoAndStop(16); 
-		}.bind(this));
+		if (this.esc_btn18) {
+			this.esc_btn18.cursor = "pointer";
+			this.esc_btn18.on("click", function() {
+				this.gotoAndStop(16);
+			}.bind(this));
+		}
+	}
+	this.frame_18 = function() {
+		this.stop();
 	}
 
 	// actions tween:
-	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1).call(this.frame_1).wait(1).call(this.frame_2).wait(1).call(this.frame_3).wait(1).call(this.frame_4).wait(1).call(this.frame_5).wait(1).call(this.frame_6).wait(1).call(this.frame_7).wait(1).call(this.frame_8).wait(1).call(this.frame_9).wait(1).call(this.frame_10).wait(1).call(this.frame_11).wait(1).call(this.frame_12).wait(1).call(this.frame_13).wait(1).call(this.frame_14).wait(1).call(this.frame_15).wait(1).call(this.frame_16).wait(1).call(this.frame_17).wait(2));
+	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1).call(this.frame_1).wait(1).call(this.frame_2).wait(1).call(this.frame_3).wait(1).call(this.frame_4).wait(1).call(this.frame_5).wait(1).call(this.frame_6).wait(1).call(this.frame_7).wait(1).call(this.frame_8).wait(1).call(this.frame_9).wait(1).call(this.frame_10).wait(1).call(this.frame_11).wait(1).call(this.frame_12).wait(1).call(this.frame_13).wait(1).call(this.frame_14).wait(1).call(this.frame_15).wait(1).call(this.frame_16).wait(1).call(this.frame_17).wait(1).call(this.frame_18).wait(1));
 
 	// Button
 	this.no_btn = new lib.yes();
@@ -1925,7 +1934,10 @@ if (reversed == null) { reversed = false; }
 	this.instance_12 = new lib.info();
 	this.instance_12.setTransform(0,0,0.6667,0.6667);
 
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.intro_video}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.intro_video2}]},1).to({state:[]},1).to({state:[{t:this.instance_5},{t:this.instance_4}]},1).to({state:[{t:this.patient}]},1).to({state:[{t:this.family}]},1).to({state:[{t:this.nurse}]},1).to({state:[{t:this.computer}]},1).to({state:[{t:this.refer}]},1).to({state:[{t:this.monitor}]},1).to({state:[{t:this.intro_video3}]},1).to({state:[{t:this.instance_7},{t:this.instance_6}]},1).to({state:[{t:this.intro_video4}]},1).to({state:[{t:this.instance_9},{t:this.instance_8}]},1).to({state:[{t:this.instance_10}]},1).to({state:[{t:this.instance_12},{t:this.instance_11}]},1).to({state:[]},1).wait(1));
+	this.instance_16 = new lib.M3();
+	this.instance_16.setTransform(0,0,2,2);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.intro_video}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.intro_video2}]},1).to({state:[]},1).to({state:[{t:this.instance_5},{t:this.instance_4}]},1).to({state:[{t:this.patient}]},1).to({state:[{t:this.family}]},1).to({state:[{t:this.nurse}]},1).to({state:[{t:this.computer}]},1).to({state:[{t:this.refer}]},1).to({state:[{t:this.monitor}]},1).to({state:[{t:this.intro_video3}]},1).to({state:[{t:this.instance_7},{t:this.instance_6}]},1).to({state:[{t:this.intro_video4}]},1).to({state:[{t:this.instance_9},{t:this.instance_8}]},1).to({state:[{t:this.instance_10}]},1).to({state:[{t:this.instance_12},{t:this.instance_11}]},1).to({state:[{t:this.instance_16}]},1).wait(1));
 
 	// bg
 	this.instance_13 = new lib.M1();
@@ -1955,6 +1967,7 @@ lib.properties = {
 	manifest: [
 		{src:"images/CachedBmp_4.png?1785996618314", id:"CachedBmp_4"},
 		{src:"images/Artboard2.png?1785996618314", id:"Artboard2"},
+		{src:"Assets/AN_use/Mission 3/M3.jpg?1785996618314", id:"M3"},
 		{src:"images/Demo4_atlas_1.png?1785996615580", id:"Demo4_atlas_1"},
 		{src:"images/Demo4_atlas_2.png?1785996615580", id:"Demo4_atlas_2"},
 		{src:"images/Demo4_atlas_3.png?1785996615580", id:"Demo4_atlas_3"},
