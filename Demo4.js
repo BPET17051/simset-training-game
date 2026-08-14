@@ -1870,32 +1870,32 @@ if (reversed == null) { reversed = false; }
 	this.patient = new lib.an_Video({'id': 'patient', 'src':'videos/patient.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.patient.name = "patient";
-	this.patient.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.patient.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.family = new lib.an_Video({'id': 'family', 'src':'videos/family.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.family.name = "family";
-	this.family.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.family.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.nurse = new lib.an_Video({'id': 'nurse', 'src':'videos/nurse.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.nurse.name = "nurse";
-	this.nurse.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.nurse.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.computer = new lib.an_Video({'id': 'computer', 'src':'videos/computer.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.computer.name = "computer";
-	this.computer.setTransform(655.6,386.95,1.11,2.6308,0,0,0,200.8,150.5);
+	this.computer.setTransform(640,386.95,1.11,2.6308,0,0,0,200.8,150.5);
 
 	this.refer = new lib.an_Video({'id': 'refer', 'src':'videos/refer.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.refer.name = "refer";
-	this.refer.setTransform(654.7,385.65,1.11,2.631,0,0,0,200,150);
+	this.refer.setTransform(640,385.65,1.11,2.631,0,0,0,200,150);
 
 	this.monitor = new lib.an_Video({'id': 'monitor', 'src':'videos/monitor.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':true, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.monitor.name = "monitor";
-	this.monitor.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.monitor.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.intro_video3 = new lib.an_Video({'id': 'intro_video3', 'src':'videos/M2-info.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
