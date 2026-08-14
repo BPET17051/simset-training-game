@@ -1937,7 +1937,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_15 = new lib.refer_bg();
 	this.instance_15.setTransform(0,0,0.6667,0.6667);
 
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[]}).to({state:[{t:this.instance_13}]},4).to({state:[{t:this.instance_14}]},1).to({state:[]},1).to({state:[{t:this.instance_15}]},4).to({state:[]},1).wait(8));
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[]}).to({state:[{t:this.instance_13}]},4).to({state:[{t:this.instance_14}]},1).to({state:[{t:this.instance_14}]},1).to({state:[{t:this.instance_15}]},4).to({state:[{t:this.instance_14}]},1).to({state:[]},1).wait(7));
 
 	this._renderFirstFrame();
 
