@@ -141,12 +141,6 @@ p.nominalBounds = new cjs.Rectangle(0,0,2220,110);
 p.nominalBounds = new cjs.Rectangle(0,0,1356,6739);
 
 
-(lib.M3 = function() {
-	this.initialize(img.M3);
-}).prototype = p = new cjs.Bitmap();
-p.nominalBounds = new cjs.Rectangle(0,0,640,360);
-
-
 (lib.back1 = function() {
 	this.initialize(ss["Demo4_atlas_13"]);
 	this.gotoAndStop(1);
@@ -1934,10 +1928,18 @@ if (reversed == null) { reversed = false; }
 	this.instance_12 = new lib.info();
 	this.instance_12.setTransform(0,0,0.6667,0.6667);
 
-	this.instance_16 = new lib.M3();
-	this.instance_16.setTransform(0,0,2,2);
+	this.mission3_status = new cjs.Container();
+	var mission3_bg = new lib.ERroomcrop();
+	mission3_bg.setTransform(50,37,0.8395,0.8395);
+	var mission3_panel = new cjs.Shape();
+	mission3_panel.graphics.f("rgba(255,255,255,0.96)").s("#303030").ss(4).rr(300,250,680,220,24);
+	var mission3_text = new cjs.Text("กำลังจัดทำ", "bold 52px 'Google Sans', Tahoma, sans-serif", "#1A1A1A");
+	mission3_text.textAlign = "center";
+	mission3_text.textBaseline = "middle";
+	mission3_text.setTransform(640,360);
+	this.mission3_status.addChild(mission3_bg, mission3_panel, mission3_text);
 
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.intro_video}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.intro_video2}]},1).to({state:[]},1).to({state:[{t:this.instance_5},{t:this.instance_4}]},1).to({state:[{t:this.patient}]},1).to({state:[{t:this.family}]},1).to({state:[{t:this.nurse}]},1).to({state:[{t:this.computer}]},1).to({state:[{t:this.refer}]},1).to({state:[{t:this.monitor}]},1).to({state:[{t:this.intro_video3}]},1).to({state:[{t:this.instance_7},{t:this.instance_6}]},1).to({state:[{t:this.intro_video4}]},1).to({state:[{t:this.instance_9},{t:this.instance_8}]},1).to({state:[{t:this.instance_10}]},1).to({state:[{t:this.instance_12},{t:this.instance_11}]},1).to({state:[{t:this.instance_16}]},1).wait(1));
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.intro_video}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.intro_video2}]},1).to({state:[]},1).to({state:[{t:this.instance_5},{t:this.instance_4}]},1).to({state:[{t:this.patient}]},1).to({state:[{t:this.family}]},1).to({state:[{t:this.nurse}]},1).to({state:[{t:this.computer}]},1).to({state:[{t:this.refer}]},1).to({state:[{t:this.monitor}]},1).to({state:[{t:this.intro_video3}]},1).to({state:[{t:this.instance_7},{t:this.instance_6}]},1).to({state:[{t:this.intro_video4}]},1).to({state:[{t:this.instance_9},{t:this.instance_8}]},1).to({state:[{t:this.instance_10}]},1).to({state:[{t:this.instance_12},{t:this.instance_11}]},1).to({state:[{t:this.mission3_status}]},1).wait(1));
 
 	// bg
 	this.instance_13 = new lib.M1();
@@ -1967,7 +1969,6 @@ lib.properties = {
 	manifest: [
 		{src:"images/CachedBmp_4.png?1785996618314", id:"CachedBmp_4"},
 		{src:"images/Artboard2.png?1785996618314", id:"Artboard2"},
-		{src:"Assets/AN_use/Mission 3/M3.jpg?1785996618314", id:"M3"},
 		{src:"images/Demo4_atlas_1.png?1785996615580", id:"Demo4_atlas_1"},
 		{src:"images/Demo4_atlas_2.png?1785996615580", id:"Demo4_atlas_2"},
 		{src:"images/Demo4_atlas_3.png?1785996615580", id:"Demo4_atlas_3"},
