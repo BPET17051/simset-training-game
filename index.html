@@ -26,6 +26,29 @@
 	left:0;right:0;
 	top:0;bottom:0;
   }
+  #rotate_prompt {
+	display:none;
+  }
+  @media (orientation:portrait) and (max-width:900px) {
+	#animation_container { display:none; }
+	#rotate_prompt {
+	  display:flex;
+	  position:fixed;
+	  inset:0;
+	  background:#000;
+	  color:#fff;
+	  flex-direction:column;
+	  align-items:center;
+	  justify-content:center;
+	  text-align:center;
+	  font-family:'Google Sans', Tahoma, sans-serif;
+	  padding:32px;
+	  box-sizing:border-box;
+	  z-index:1000;
+	}
+	#rotate_prompt .icon { font-size:64px; transform:rotate(90deg); margin-bottom:16px; }
+	#rotate_prompt p { font-size:20px; line-height:1.6; margin:0; }
+  }
 </style>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script>
@@ -145,6 +168,10 @@ function playSound(id, loop, offset) {
 		<canvas id="canvas" width="1280" height="720" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1280px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
 		</div>
+	</div>
+	<div id="rotate_prompt">
+		<div class="icon">&#128241;</div>
+		<p>กรุณาหมุนหน้าจอเป็นแนวนอนเพื่อเล่น<br>Please rotate your phone to landscape</p>
 	</div>
 </body>
 </html>
