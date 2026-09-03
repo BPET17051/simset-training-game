@@ -71,11 +71,7 @@
 	background:rgba(0,0,0,0.6);
   }
   #loading_screen > * { position:relative; }
-  #title_badge { font-size:14px; letter-spacing:2px; background:#2b3fd6; padding:4px 16px; border-radius:4px; margin-bottom:16px; text-transform:uppercase; }
-  #title_main { font-size:clamp(32px,7vw,64px); font-weight:800; line-height:1; margin:0; }
-  #title_main .e { color:#ffcc33; }
-  #title_main .rest { color:#ff3b3b; -webkit-text-stroke:2px #4a0000; }
-  #title_sub { font-size:clamp(18px,3vw,28px); font-weight:700; margin:4px 0 8px; }
+  #title_logo { width:min(560px,85vw); height:auto; margin-bottom:24px; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
   #title_faculty { font-size:14px; opacity:0.85; margin-bottom:36px; max-width:520px; }
   #loading_label { font-size:16px; margin-bottom:12px; opacity:0.9; }
   #loading_bar_track { width:min(400px,70vw); height:10px; border-radius:6px; background:rgba(255,255,255,0.25); overflow:hidden; }
@@ -216,9 +212,7 @@ function playSound(id, loop, offset) {
 		<p>กรุณาหมุนหน้าจอเป็นแนวนอนเพื่อเล่น<br>Please rotate your phone to landscape</p>
 	</div>
 	<div id="loading_screen">
-		<div id="title_badge">Case Scenario</div>
-		<h1 id="title_main"><span class="e">E</span><span class="rest">mergency Consultation</span></h1>
-		<div id="title_sub">Acute STEMI Consultation</div>
+		<img id="title_logo" src="images/logo_title.png" alt="Emergency Consultation">
 		<div id="title_faculty">เกมจำลองสถานการณ์ทางการแพทย์ สำหรับฝึกทักษะการขอคำปรึกษา<br>คณะแพทยศาสตร์ศิริราชพยาบาล</div>
 		<div id="loading_label">กำลังโหลด...</div>
 		<div id="loading_bar_track"><div id="loading_bar"></div></div>
