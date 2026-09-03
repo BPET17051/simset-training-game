@@ -49,6 +49,31 @@
 	#rotate_prompt .icon { font-size:64px; transform:rotate(90deg); margin-bottom:16px; }
 	#rotate_prompt p { font-size:20px; line-height:1.6; margin:0; }
   }
+  #loading_screen {
+	position:fixed;
+	inset:0;
+	z-index:2000;
+	background:#000 url("Assets/bg.jpg") center/cover no-repeat;
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:flex-end;
+	padding-bottom:8%;
+	box-sizing:border-box;
+	font-family:'Google Sans', Tahoma, sans-serif;
+	color:#fff;
+  }
+  #loading_screen::before {
+	content:"";
+	position:absolute;
+	inset:0;
+	background:rgba(0,0,0,0.55);
+  }
+  #loading_screen > * { position:relative; }
+  #loading_label { font-size:20px; margin-bottom:12px; text-shadow:0 1px 3px rgba(0,0,0,0.8); }
+  #loading_bar_track { width:min(400px,70vw); height:10px; border-radius:6px; background:rgba(255,255,255,0.25); overflow:hidden; }
+  #loading_bar { height:100%; width:0%; background:#4CAF50; transition:width 0.15s ease-out; }
+  #loading_pct { font-size:14px; margin-top:8px; opacity:0.85; }
 </style>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script>
@@ -127,15 +152,25 @@ function init() {
 	var loader = new createjs.LoadQueue(false);
 	loader.installPlugin(createjs.Sound);
 	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+	loader.addEventListener("progress", handleLoadProgress);
 	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
 	var lib=comp.getLibrary();
 	loader.loadManifest(lib.properties.manifest);
 }
+function handleLoadProgress(evt) {
+	var pct = Math.round(evt.progress * 100);
+	var bar = document.getElementById("loading_bar");
+	var txt = document.getElementById("loading_pct");
+	if (bar) bar.style.width = pct + "%";
+	if (txt) txt.textContent = pct + "%";
+}
 function handleFileLoad(evt, comp) {
-	var images=comp.getImages();	
-	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+	var images=comp.getImages();
+	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }
 }
 function handleComplete(evt,comp) {
+	var loadingScreen = document.getElementById("loading_screen");
+	if (loadingScreen) loadingScreen.style.display = "none";
 	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
 	var lib=comp.getLibrary();
 	var ss=comp.getSpriteSheet();
@@ -172,6 +207,11 @@ function playSound(id, loop, offset) {
 	<div id="rotate_prompt">
 		<div class="icon">&#128241;</div>
 		<p>กรุณาหมุนหน้าจอเป็นแนวนอนเพื่อเล่น<br>Please rotate your phone to landscape</p>
+	</div>
+	<div id="loading_screen">
+		<div id="loading_label">กำลังโหลด...</div>
+		<div id="loading_bar_track"><div id="loading_bar"></div></div>
+		<div id="loading_pct">0%</div>
 	</div>
 </body>
 </html>
