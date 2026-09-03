@@ -3235,7 +3235,7 @@ if (reversed == null) { reversed = false; }
 		if (dom_overlay_container && !document.getElementById(endNoticeId)) {
 		    var endNotice = document.createElement("div");
 		    endNotice.id = endNoticeId;
-		    endNotice.style.cssText = "position:absolute; left:60px; top:40px; width:1160px; padding:24px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:22px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
+		    endNotice.style.cssText = "position:absolute; left:60px; top:110px; width:1160px; padding:24px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:22px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
 		    endNotice.textContent = "สิ้นสุดการเรียนรู้แล้ว กรุณาถ่าย video หรือบันทึกเสียงของการขอคำปรึกษาจากโจทย์ที่แนบให้ ด้วยโทรศัพท์หรือกล้องของท่านเอง ให้ได้ยินเสียงของการปรึกษา แต่ไม่เห็นใบหน้าหรือสิ่งใดที่จะระบุตัวตนของท่าน";
 		    dom_overlay_container.appendChild(endNotice);
 		}
