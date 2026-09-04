@@ -3878,9 +3878,13 @@ an.makeResponsive = function(isResp, respDim, isScale, scaleType, domContainers)
 			else if(scaleType==1) {					
 				sRatio = Math.min(xRatio, yRatio);				
 			}				
-			else if(scaleType==2) {					
-				sRatio = Math.max(xRatio, yRatio);				
-			}			
+			else if(scaleType==2) {
+				// ponytail: cap cover-fit crop so UI placed close to the canvas edge (e.g. "PRESS START")
+				// doesn't get cut off on wide/tall windows. Raise MAX_OVERSCALE only after checking every
+				// frame's edge-adjacent elements at the wider aspect - see frame_1/press_start regression.
+				var MAX_OVERSCALE = 1.06;
+				sRatio = Math.min(Math.max(xRatio, yRatio), Math.min(xRatio, yRatio) * MAX_OVERSCALE);
+			}
 		}
 		domContainers[0].width = w * pRatio * sRatio;			
 		domContainers[0].height = h * pRatio * sRatio;
