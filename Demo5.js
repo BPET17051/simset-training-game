@@ -3304,7 +3304,7 @@ if (reversed == null) { reversed = false; }
 
 	this.esc_btn = new lib.esc();
 	this.esc_btn.name = "esc_btn";
-	this.esc_btn.setTransform(1123.5,117.35);
+	this.esc_btn.setTransform(1200,117.35);
 	this.esc_btn._off = true;
 	new cjs.ButtonHelper(this.esc_btn, 0, 1, 1);
 
@@ -3401,7 +3401,7 @@ if (reversed == null) { reversed = false; }
 	this.home_no.setTransform(640.75,474.1);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.yes_btn},{t:this.no_btn}]}).to({state:[]},1).to({state:[{t:this.press_start}]},1).to({state:[]},1).to({state:[{t:this.next_btn5}]},1).to({state:[{t:this.patient_btn},{t:this.com_btn},{t:this.paper_btn},{t:this.monitor_btn},{t:this.nurse_btn},{t:this.fam_btn},{t:this.next_btn6}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[]},1).to({state:[{t:this.next_btn14}]},1).to({state:[]},1).to({state:[{t:this.next_btn16},{t:this.back_btn16}]},1).to({state:[{t:this.submit_btn17},{t:this.info_btn}]},1).to({state:[{t:this.scroll_bar},{t:this.next_btn18},{t:this.esc_btn18}]},1).to({state:[]},1).to({state:[{t:this.next_btn20}]},1).to({state:[]},1).to({state:[{t:this.next_btn22},{t:this.back_btn22}]},1).to({state:[{t:this.submit_btn3},{t:this.reset_btn},{t:this.solution_btn},{t:this.warning_txt},{t:this.congrate}]},1).to({state:[{t:this.info_btn24},{t:this.next_btn24}]},1).to({state:[{t:this.esc_btn25},{t:this.scroll_bar2}]},1).to({state:[]},1).to({state:[{t:this.home_no}]},1).wait(1));
-	this.timeline.addTween(cjs.Tween.get(this.esc_btn).wait(6).to({_off:false},0).wait(3).to({scaleX:1.0038,scaleY:1.0038,x:950,y:80},0).wait(1).to({scaleX:1,scaleY:1},0).wait(1).to({x:1123.5,y:117.35},0).to({_off:true},1).wait(15));
+	this.timeline.addTween(cjs.Tween.get(this.esc_btn).wait(6).to({_off:false},0).wait(3).to({scaleX:1.0038,scaleY:1.0038,x:950,y:80},0).wait(1).to({scaleX:1,scaleY:1},0).wait(1).to({x:1200,y:117.35},0).to({_off:true},1).wait(15));
 
 	// mask_idn (mask)
 	var mask = new cjs.Shape();
