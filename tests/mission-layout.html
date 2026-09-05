@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission layout verification</title>
+<style>
+  body { margin:0; font:14px sans-serif; }
+  iframe { position:fixed; inset:0; width:100%; height:100%; border:0; }
+  nav { position:fixed; top:0; left:0; z-index:10; background:white; padding:4px; }
+</style>
+<iframe title="Training game"></iframe>
+<nav>
+  <button id="mission">Mission 1</button>
+  <button id="room">Room</button>
+  <button id="check">Check layout</button>
+  <button id="hide">Hide controls</button>
+  <output id="result">Loading</output>
+</nav>
+<script>
+  const game = document.querySelector('iframe');
+  const result = document.querySelector('#result');
+  // This harness is for local QA, not a second production entry point.
+  if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
+    game.src = '../index.html';
+  } else {
+    result.textContent = 'Local verification only';
+    document.querySelectorAll('button').forEach(button => button.disabled = true);
+  }
+  document.querySelector('#hide').onclick = () => document.querySelector('nav').hidden = true;
+  function scene(frame) {
+    const win = game.contentWindow;
+    if (!win.exportRoot || !win.stage) return;
+    win.exportRoot.gotoAndStop(frame);
+    win.stage.update();
+    result.textContent = 'Frame ' + win.exportRoot.currentFrame;
+  }
+  document.querySelector('#mission').onclick = () => scene(4);
+  document.querySelector('#room').onclick = () => scene(5);
+  document.querySelector('#check').onclick = () => {
+    const win = game.contentWindow;
+    const foreground = win.document.querySelector('#canvas').getBoundingClientRect();
+    const bg = win.document.querySelector('#mission_background');
+    const room = bg.getBoundingClientRect();
+    const mission = win.exportRoot.currentFrame === 4;
+    const fits = foreground.left >= -1 && foreground.top >= -1 &&
+      foreground.right <= win.innerWidth + 1 && foreground.bottom <= win.innerHeight + 1;
+    const covers = Math.abs(room.left) < 1 && Math.abs(room.top) < 1 &&
+      Math.abs(room.width - win.innerWidth) < 1 && Math.abs(room.height - win.innerHeight) < 1;
+    const restored = bg.style.display === 'none' && win.canvas.style.backgroundColor !== 'transparent' && !win.exportRoot.instance_26.mask;
+    result.textContent = (mission ? fits && covers : restored) ? 'PASS' : 'FAIL';
+  };
+</script>
+</html>
