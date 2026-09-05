@@ -19,7 +19,11 @@
 			// ponytail: bg video is a muted, blurred, scaled-up copy of the same source used as an
 			// ambient backdrop instead of plain white margins - upgrade to a real letterbox-fill asset
 			// if precise sync with the fg video ever matters (it doesn't for a blurred backdrop).
-			return "<div><video class='an-video-bg' muted loop style='position:absolute;left:50%;top:50%;width:320%;height:320%;transform:translate(-50%,-50%);filter:blur(40px) brightness(0.5);object-fit:cover;z-index:0;'/><video class='an-video-fg' style='position:relative;z-index:1;'/></div>";
+			// ponytail: right side stays capped short of center - the canvas-drawn video-close
+			// button (esc_btn) sits just past the video's own right edge, and DOM content here
+			// always paints above canvas, so a full-bleed backdrop would hide it. Left/top/bottom
+			// have nothing to protect, so those bleed generously. Revisit if esc_btn ever moves.
+			return "<div><video class='an-video-bg' muted loop style='position:absolute;top:-60%;bottom:-60%;left:-60%;right:5%;filter:blur(40px) brightness(0.5);object-fit:cover;z-index:0;'/><video class='an-video-fg' style='position:relative;z-index:1;'/></div>";
 		},
 		getProperties: function() {
 			return this._props;
