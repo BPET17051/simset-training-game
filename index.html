@@ -20,6 +20,18 @@
 	overflow:hidden;
 	background:#000;
   }
+  /* ponytail: static blurred backdrop, not a live canvas capture - simplest fix that still
+     eliminates the plain black margin. Revisit if letterbox margins ever grow large enough
+     for the static blur to look obviously mismatched vs. the live game content. Relies on
+     plain DOM order (this div comes before #animation_container, no z-index) since z-index
+     on a fixed-position pseudo-element under a non-positioned body escapes to the root
+     stacking context unpredictably - confirmed by testing, not assumed. */
+  #ambient_bg {
+	position:fixed;
+	inset:-40px;
+	background:url("Assets/bg.jpg") center/cover no-repeat;
+	filter: blur(30px) brightness(0.45);
+  }
   #animation_container {
 	position:fixed;
 	margin:auto;
@@ -202,6 +214,7 @@ function playSound(id, loop, offset) {
 <!-- write your code here -->
 </head>
 <body onload="init();" style="margin:0px;">
+	<div id="ambient_bg"></div>
 	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:1280px; height:720px">
 		<canvas id="canvas" width="1280" height="720" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1280px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
