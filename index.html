@@ -20,18 +20,25 @@
 	overflow:hidden;
 	background:#000;
   }
-  /* ponytail: static blurred backdrop, not a live canvas capture - simplest fix that still
-     eliminates the plain black margin. Revisit if letterbox margins ever grow large enough
-     for the static blur to look obviously mismatched vs. the live game content. Relies on
-     plain DOM order (this div comes before #animation_container, no z-index) since z-index
-     on a fixed-position pseudo-element under a non-positioned body escapes to the root
-     stacking context unpredictably - confirmed by testing, not assumed. */
-  #ambient_bg {
+  /* ponytail: decorative side panels (user-provided art, cropped from their mockup) instead
+     of a blurred backdrop - user's call after seeing the blur in practice. Fixed width
+     (matches the source art's own proportions), stretched to full viewport height since the
+     art has no natural tiling seam. On near-16:9 screens the margin is thin, so most of each
+     panel sits behind the game canvas (only the outer sliver shows) - that's expected, not a
+     bug: panels are only fully visible on wider screens where the letterbox margin is wide
+     enough to show them. Plain DOM order (both come before #animation_container, no z-index)
+     - z-index on a fixed-position element under a non-positioned body escapes to the root
+     stacking context unpredictably, confirmed during the earlier blur-backdrop attempt. */
+  #panel_left, #panel_right {
 	position:fixed;
-	inset:-40px;
-	background:url("Assets/bg.jpg") center/cover no-repeat;
-	filter: blur(30px) brightness(0.45);
+	top:0;
+	bottom:0;
+	width:245px;
+	background-size:100% 100%;
+	background-repeat:no-repeat;
   }
+  #panel_left { left:0; background-image:url("images/panel_left.png"); }
+  #panel_right { right:0; background-image:url("images/panel_right.png"); }
   #animation_container {
 	position:fixed;
 	margin:auto;
@@ -207,6 +214,18 @@ function handleComplete(evt,comp) {
 	AdobeAn.makeResponsive(true,'both',true,2,[canvas,anim_container,dom_overlay_container]);
 	AdobeAn.compositionLoaded(lib.properties.id);
 	fnStartAnimation();
+	updateSidePanels();
+	window.addEventListener('resize', function(){ requestAnimationFrame(updateSidePanels); });
+}
+function updateSidePanels() {
+	// ponytail: reads the already-laid-out margin instead of recomputing the sRatio math a
+	// second time here - one source of truth (the actual rendered canvas position).
+	var margin = document.getElementById("animation_container").getBoundingClientRect().left;
+	// stretch (or shrink) to exactly fill the margin, whatever its width - a gap or overlap
+	// would look worse than a slightly stretched/compressed pixel-art panel.
+	var w = Math.max(0, margin) + "px";
+	document.getElementById("panel_left").style.width = w;
+	document.getElementById("panel_right").style.width = w;
 }
 function playSound(id, loop, offset) {
 	return createjs.Sound.play(id, {'interrupt':createjs.Sound.INTERRUPT_EARLY, 'loop': loop, 'offset': offset});}
@@ -214,7 +233,8 @@ function playSound(id, loop, offset) {
 <!-- write your code here -->
 </head>
 <body onload="init();" style="margin:0px;">
-	<div id="ambient_bg"></div>
+	<div id="panel_left"></div>
+	<div id="panel_right"></div>
 	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:1280px; height:720px">
 		<canvas id="canvas" width="1280" height="720" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1280px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
