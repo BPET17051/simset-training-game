@@ -3639,17 +3639,17 @@ if (reversed == null) { reversed = false; }
 	this.patient = new lib.an_Video({'id': 'patient', 'src':'videos/patient.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.patient.name = "patient";
-	this.patient.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.patient.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.family = new lib.an_Video({'id': 'family', 'src':'videos/family.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.family.name = "family";
-	this.family.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.family.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.nurse = new lib.an_Video({'id': 'nurse', 'src':'videos/nurse.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.nurse.name = "nurse";
-	this.nurse.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.nurse.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.computer = new lib.an_Video({'id': 'computer', 'src':'videos/computer.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
@@ -3664,7 +3664,7 @@ if (reversed == null) { reversed = false; }
 	this.monitor = new lib.an_Video({'id': 'monitor', 'src':'videos/monitor.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':true, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.monitor.name = "monitor";
-	this.monitor.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.monitor.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.intro_video3 = new lib.an_Video({'id': 'intro_video3', 'src':'videos/M2-info.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
