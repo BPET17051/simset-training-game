@@ -229,6 +229,14 @@ function playSound(id, loop, offset) {
 <!-- write your code here -->
 </head>
 <body onload="init();" style="margin:0px;">
+	<!-- ponytail: warm the browser's HTTP cache for the two intro clips (28.6MB /
+	     4.5MB) as soon as parsing reaches here, in parallel with the LoadQueue's own
+	     image/font fetches - by the time consent is accepted and frame_1/frame_3
+	     attach their own <video>, most or all of the bytes are already cached. Not
+	     played, just buffered; upgrade path if still too slow is a smaller re-encode
+	     of All_intro_cut.mp4, which this can't fix on its own. -->
+	<video preload="auto" muted playsinline style="display:none" src="videos/All_intro_cut.mp4"></video>
+	<video preload="auto" muted playsinline style="display:none" src="videos/M1_into.mp4"></video>
 	<div id="ambient_bg"></div>
 	<canvas id="mission_background" aria-hidden="true"></canvas>
 	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:1280px; height:720px">
