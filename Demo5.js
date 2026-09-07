@@ -752,8 +752,8 @@ if (reversed == null) { reversed = false; }
 
 	// Layer_1
 	this.shape = new cjs.Shape();
-	this.shape.graphics.beginFill("rgba(244,248,255,0.18)").beginStroke("#0B57D0").setStrokeStyle(3).drawRoundRect(-129.75,-70.05,259.5,140.1,18);
-	this.shape.shadow = new cjs.Shadow("rgba(0,0,0,0.16)",0,4,10);
+	this.shape.graphics.f("rgba(0,51,204,0.008)").s().p("A0RK8IAA13MAojAAAIAAV3g");
+	this.shape.setTransform(0.025,0);
 
 	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
 
