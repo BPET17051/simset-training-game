@@ -216,10 +216,26 @@ function handleComplete(evt,comp) {
 		createjs.Ticker.addEventListener("tick", stage);
 	}	    
 	//Code to support hidpi screens and responsive scaling.
-	SimsetMissionLayout.install({root:exportRoot, stage:stage,
-		containers:[canvas,anim_container,dom_overlay_container],
-		roomImage:queue.getResult('Demo5_atlas_7')});
-	SimsetTrainingUI.install({root:exportRoot, ticker:createjs.Ticker, document:document});
+	// ponytail: a throw in here used to abort the rest of handleComplete() -
+	// fnStartAnimation() (which starts the ticker) never ran, so the game froze
+	// on a half-drawn frame with no way to recover short of a manual reload.
+	// mission-layout's own resize() already retries itself on every frame change
+	// (previousFrame stays -1 until a resize() call succeeds), so once the ticker
+	// is running a transient failure here heals itself within a tick or two -
+	// but only if the ticker actually starts. Room art / video / training-flow
+	// are enhancements; the game booting is not allowed to depend on them.
+	try {
+		SimsetMissionLayout.install({root:exportRoot, stage:stage,
+			containers:[canvas,anim_container,dom_overlay_container],
+			roomImage:queue.getResult('Demo5_atlas_7')});
+	} catch (e) {
+		console.error('SimsetMissionLayout.install failed, continuing without it this tick:', e);
+	}
+	try {
+		SimsetTrainingUI.install({root:exportRoot, ticker:createjs.Ticker, document:document});
+	} catch (e) {
+		console.error('SimsetTrainingUI.install failed, continuing without it:', e);
+	}
 	AdobeAn.compositionLoaded(lib.properties.id);
 	fnStartAnimation();
 }
