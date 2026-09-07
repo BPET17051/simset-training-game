@@ -110,6 +110,14 @@
 			if(!this._options["muted"]) {
 				$el.removeAttr("muted");
 			}
+			// The `autoplay` attribute alone never plays a non-muted video (browser
+			// autoplay policy) - only an explicit play() call counts, and this one runs
+			// synchronously inside the button click that opened the popup, so it still
+			// carries the user-gesture activation the policy requires.
+			if(this._options["autoplay"] && $el.length) {
+				var playPromise = $el.get(0).play();
+				if(playPromise && playPromise.catch) playPromise.catch(function(){});
+			}
 			if(this._$bg && this._options["src"]) {
 				if(this._$bg.attr("src") !== this._options["src"]) {
 					this._$bg.prop("src", this._options["src"]);
