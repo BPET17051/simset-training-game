@@ -3282,7 +3282,13 @@ if (reversed == null) { reversed = false; }
 		if (dom_overlay_container && !endNotice) {
 		    endNotice = document.createElement("div");
 		    endNotice.id = endNoticeId;
-		    endNotice.style.cssText = "position:absolute; left:60px; top:110px; width:1160px; padding:24px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:22px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
+		    // ponytail: was top:110px, right where the baked "กรุณาติดต่อ...pre-survey"
+		    // canvas art starts - the 2-line "completed" message (longer than the
+		    // 1-line "declined" one) grew tall enough to overlap it, verified live
+		    // (box bottom ~228px vs art starting ~208px). Moved into the empty space
+		    // below the restart button instead of guessing a tighter font/padding
+		    // budget against art position we don't control from here.
+		    endNotice.style.cssText = "position:absolute; left:60px; top:580px; width:1160px; padding:18px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:20px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
 		    dom_overlay_container.appendChild(endNotice);
 		}
 		if (endNotice) endNotice.textContent = SimsetTrainingUI.completionMessage(root._simsetEndReason);
