@@ -3817,7 +3817,7 @@ lib.properties = {
 		{src:"sounds/Audio_intro.mp3?1788401219961", id:"Audio_intro"},
 		{src:"https://code.jquery.com/jquery-3.4.1.min.js?1788401219961", id:"lib/jquery-3.4.1.min.js"},
 		{src:"components/sdk/anwidget.js?1788401219961", id:"sdk/anwidget.js"},
-		{src:"components/video/src/video.js?20260907-autoplay-fix", id:"an.Video"}
+		{src:"components/video/src/video.js?20260907-no-dupe-fetch", id:"an.Video"}
 	],
 	preloads: []
 };

@@ -99,32 +99,6 @@
   #loading_bar_track { width:min(400px,70vw); height:10px; border-radius:6px; background:rgba(255,255,255,0.25); overflow:hidden; }
   #loading_bar { height:100%; width:0%; background:#4CAF50; transition:width 0.15s ease-out; }
   #loading_pct { font-size:14px; margin-top:8px; opacity:0.85; }
-  #video_progress {
-	position:fixed;
-	left:50%;
-	bottom:max(18px,env(safe-area-inset-bottom));
-	width:min(360px,72vw);
-	padding:10px 14px 12px;
-	box-sizing:border-box;
-	border:1px solid rgba(255,255,255,0.28);
-	border-radius:14px;
-	background:rgba(0,0,0,0.72);
-	box-shadow:0 8px 24px rgba(0,0,0,0.24);
-	color:#fff;
-	font:600 14px/1.35 'Google Sans',Tahoma,sans-serif;
-	text-align:center;
-	pointer-events:none;
-	opacity:0;
-	transform:translate(-50%,8px);
-	transition:opacity 150ms ease-out,transform 150ms ease-out;
-	z-index:900;
-  }
-  #video_progress[data-visible="true"] { opacity:1; transform:translate(-50%,0); }
-  #video_progress_track { height:4px; margin-top:8px; border-radius:2px; background:rgba(255,255,255,0.28); overflow:hidden; }
-  #video_progress_bar { height:100%; background:#65D98A; transform:scaleX(0); transform-origin:left center; }
-  @media (prefers-reduced-motion:reduce) {
-	#video_progress { transition:none; }
-  }
 </style>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script>
@@ -180,7 +154,7 @@ function isFontAvailable(font, obj) {
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Google+Sans:regular&subset=latin">
 <script src="Demo5.js?20260907-audit-fixes-v3"></script>
 <script src="mission-layout.js?v=1"></script>
-<script src="training-ui.js?v=20260907-audit-fixes"></script>
+<script src="training-ui.js?v=20260907-no-progress-box"></script>
 <script>
 var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
 function init() {
@@ -261,10 +235,6 @@ function playSound(id, loop, offset) {
 		<canvas id="canvas" width="1280" height="720" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1280px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
 		</div>
-	</div>
-	<div id="video_progress" data-visible="false" role="status" aria-live="polite" aria-hidden="true">
-		<div data-video-progress-label>กำลังเล่นวิดีโอ กรุณารอสักครู่</div>
-		<div id="video_progress_track" aria-hidden="true"><div id="video_progress_bar" data-video-progress-bar></div></div>
 	</div>
 	<div id="rotate_prompt">
 		<div class="icon">&#128241;</div>
