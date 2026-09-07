@@ -10,9 +10,10 @@
 </style>
 <iframe title="Training game"></iframe>
 <nav>
-  <button id="mission">Mission 1</button>
-  <button id="room">Room</button>
-  <button id="check">Check layout</button>
+  <label>Frame <select id="frame"></select></label>
+  <button id="show">Show frame</button>
+  <button id="check">Check frame</button>
+  <button id="check-all">Check all frames</button>
   <button id="hide">Hide controls</button>
   <output id="result">Loading</output>
 </nav>
@@ -27,27 +28,89 @@
     document.querySelectorAll('button').forEach(button => button.disabled = true);
   }
   document.querySelector('#hide').onclick = () => document.querySelector('nav').hidden = true;
+  let sceneError = null;
   function scene(frame) {
     const win = game.contentWindow;
-    if (!win.exportRoot || !win.stage) return;
-    win.exportRoot.gotoAndStop(frame);
-    win.stage.update();
-    result.textContent = 'Frame ' + win.exportRoot.currentFrame;
+    if (!win.exportRoot || !win.stage) return false;
+    const originalTimeout = win.setTimeout;
+    const originalRoot = win.root;
+    sceneError = null;
+    try {
+      // Direct frame inspection intentionally bypasses the game's normal path.
+      // Isolate layout rendering from path-dependent globals and video timers.
+      win.root = win.exportRoot;
+      win.setTimeout = () => 0;
+      if (frame !== 26) win.document.querySelector('#end_training_notice')?.remove();
+      win.exportRoot.gotoAndStop(frame);
+      win.stage.update();
+      result.textContent = 'Frame ' + win.exportRoot.currentFrame;
+      return true;
+    } catch (error) {
+      sceneError = error;
+      return false;
+    } finally {
+      win.setTimeout = originalTimeout;
+      if (originalRoot === undefined) delete win.root;
+      else win.root = originalRoot;
+    }
   }
-  document.querySelector('#mission').onclick = () => scene(4);
-  document.querySelector('#room').onclick = () => scene(5);
-  document.querySelector('#check').onclick = () => {
+  function inspect(frame) {
     const win = game.contentWindow;
     const foreground = win.document.querySelector('#canvas').getBoundingClientRect();
     const bg = win.document.querySelector('#mission_background');
-    const room = bg.getBoundingClientRect();
-    const mission = win.exportRoot.currentFrame === 4;
+    const background = bg.getBoundingClientRect();
     const fits = foreground.left >= -1 && foreground.top >= -1 &&
       foreground.right <= win.innerWidth + 1 && foreground.bottom <= win.innerHeight + 1;
-    const covers = Math.abs(room.left) < 1 && Math.abs(room.top) < 1 &&
-      Math.abs(room.width - win.innerWidth) < 1 && Math.abs(room.height - win.innerHeight) < 1;
-    const restored = bg.style.display === 'none' && win.canvas.style.backgroundColor !== 'transparent' && !win.exportRoot.instance_26.mask;
-    result.textContent = (mission ? fits && covers : restored) ? 'PASS' : 'FAIL';
+    const covers = bg.style.display === 'block' && Math.abs(background.left) < 1 &&
+      Math.abs(background.top) < 1 && Math.abs(background.width - win.innerWidth) < 1 &&
+      Math.abs(background.height - win.innerHeight) < 1;
+    const transparent = win.canvas.style.backgroundColor === 'transparent' &&
+      win.document.querySelector('#animation_container').style.backgroundColor === 'transparent';
+    const introFrame = [1, 3, 12, 14, 18, 20].includes(frame);
+    const video = win.document.querySelector('video.an-video-bg');
+    const videoRect = video?.getBoundingClientRect();
+    const videoStyle = video && win.getComputedStyle(video);
+    const videoVisible = Boolean(videoRect && videoStyle.display !== 'none' &&
+      videoStyle.visibility !== 'hidden' && Number(videoStyle.opacity) !== 0 &&
+      videoRect.width > 0 && videoRect.height > 0);
+    const videoCovers = !introFrame || Boolean(videoVisible && videoRect.left <= 1 &&
+      videoRect.top <= 1 && videoRect.right >= win.innerWidth - 1 &&
+      videoRect.bottom >= win.innerHeight - 1);
+    return { frame, fits, covers, transparent, videoCovers,
+      pass: fits && covers && transparent && videoCovers };
+  }
+  const frameSelect = document.querySelector('#frame');
+  for (let frame = 0; frame < 27; frame++) {
+    const option = document.createElement('option');
+    option.value = frame;
+    option.textContent = frame;
+    frameSelect.append(option);
+  }
+  document.querySelector('#show').onclick = () => scene(Number(frameSelect.value));
+  document.querySelector('#check').onclick = () => {
+    const frame = Number(frameSelect.value);
+    if (!scene(frame)) return;
+    const check = inspect(frame);
+    result.textContent = `${check.pass ? 'PASS' : 'FAIL'} frame ${frame}`;
+  };
+  document.querySelector('#check-all').onclick = async () => {
+    const win = game.contentWindow;
+    if (!win.exportRoot || !win.stage) return;
+    const checks = [];
+    for (let frame = 0; frame < win.exportRoot.totalFrames; frame++) {
+      if (!scene(frame)) {
+        checks.push({ frame, pass: false, error: String(sceneError) });
+        continue;
+      }
+      // Allow DOM video widgets to finish attach/detach observers before the
+      // next synthetic jump; real users never traverse frames this quickly.
+      await new Promise(resolve => setTimeout(resolve, 400));
+      checks.push(inspect(frame));
+    }
+    const failures = checks.filter(check => !check.pass);
+    result.value = failures.length
+      ? `FAIL ${failures.map(check => check.frame + (check.error ? ': ' + check.error : '')).join(', ')}`
+      : `PASS ${checks.length}/${checks.length}`;
   };
 </script>
 </html>

@@ -16,14 +16,10 @@
 			return $.extend(this.options, { 'id': "video" + _widgetID++ });
 		},
 		getCreateString: function() {
-			// ponytail: bg video is a muted, blurred, scaled-up copy of the same source used as an
-			// ambient backdrop instead of plain white margins - upgrade to a real letterbox-fill asset
-			// if precise sync with the fg video ever matters (it doesn't for a blurred backdrop).
-			// ponytail: right side stays capped short of center - the canvas-drawn video-close
-			// button (esc_btn) sits just past the video's own right edge, and DOM content here
-			// always paints above canvas, so a full-bleed backdrop would hide it. Left/top/bottom
-			// have nothing to protect, so those bleed generously. Revisit if esc_btn ever moves.
-			return "<div><video class='an-video-bg' muted loop style='position:absolute;top:-60%;bottom:-60%;left:-60%;right:5%;filter:blur(40px) brightness(0.5);object-fit:cover;z-index:0;'/><video class='an-video-fg' style='position:relative;z-index:1;'/></div>";
+			// A muted copy fills the viewport behind the fixed animation container. Keeping
+			// it outside the clipped DOM overlay lets it cover letterbox space while the
+			// later canvas layer remains visible for video-close controls.
+			return "<div><video class='an-video-bg' muted loop style='position:fixed;inset:0;width:100vw;height:100vh;filter:blur(40px) brightness(0.5);object-fit:cover;pointer-events:none;'/><video class='an-video-fg' style='position:relative;z-index:1;'/></div>";
 		},
 		getProperties: function() {
 			return this._props;
@@ -36,6 +32,8 @@
 			this._$div = $(this._element);
 			this._$this = this._$div.find('video.an-video-fg');
 			this._$bg = this._$div.find('video.an-video-bg');
+			this._$bg.detach();
+			$("#animation_container").before(this._$bg);
 
 			this.update(true);
 		},
@@ -43,9 +41,15 @@
 			if(!this._$div)
 				return;
 
+			var foreground = this._$this && this._$this.get(0);
+			var background = this._$bg && this._$bg.get(0);
+			if(foreground) foreground.pause();
+			if(background) background.pause();
 			this._$div.remove();
+			if(this._$bg) this._$bg.remove();
 			this._attached = false;
 			this._$div = null;
+			this._$bg = null;
 			$(parent).trigger("detached", this.getEventData("detached"));
 		},
 		getAttributes: function() {
@@ -53,9 +57,11 @@
 		},
 		show: function() {
 			if(this._$div) this._$div.show();
+			if(this._$bg) this._$bg.show();
 		},
 		hide: function() {
 			if(this._$div) this._$div.hide();
+			if(this._$bg) this._$bg.hide();
 		},
 		applyAttributes: function($el, force) {
 			this._superApply(arguments);

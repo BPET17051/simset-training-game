@@ -1,4 +1,30 @@
-# Mission 1: independent background and foreground
+# All scenes: independent background and foreground
+
+## Expanded request (2026-09-05)
+
+The user has requested removal of grey margins throughout the game and full
+viewport playback for all six intro videos, not just the Mission 1 prototype.
+
+Implementation sequence:
+1. Use uniform contain scaling for the foreground in every frame. Replace the
+   blurred ambient margins with white on text pages and continuous scene artwork
+   on illustrated pages. Preserve all original hit targets and training text.
+2. Keep room instruction panels separate from their background; extend baked
+   scene artwork at its outer edges where the export has no clean background.
+   Align gameplay room artwork with the existing hotspot coordinate system.
+3. Display intro_video through intro_video6 over a viewport-fixed, muted blurred
+   copy with cover fitting. Crop only video edges, never stretch the foreground
+   video or crop game controls. Pause both copies when detached.
+4. Expand the local harness to inspect all 27 frames, intro transitions and popup
+   close behavior; verify several aspect ratios, then commit/push/deploy.
+
+Acceptance: no ambient grey margins at any frame; every foreground coordinate
+inside 1280x720 stays visible; each intro covers the viewport and leaves no DOM
+overlay after transition. Research consent, scoring and scenario wording remain
+unchanged. Portrait rotation guidance is retained. External assets are reused.
+
+Additional touched file: components/video/src/video.js (existing video widget).
+The following section records the previous prototype, not the current scope.
 
 Approved direction: fill the viewport with the room background and keep the
 instruction panel and START MISSION control at their original proportions.
@@ -18,7 +44,8 @@ zero-based). Other scenes retain their existing presentation and interactions.
 ## Structure and commands
 
 - `index.html`: production entry, CreateJS/Adobe Animate runtime.
-- `Demo5.js`: generated timeline and sprite metadata, left intact.
+- `Demo5.js`: generated timeline and sprite metadata; only the video-component
+  cache key changes so deployed clients fetch the updated widget.
 - `mission-layout.js`: isolated layout adapter; ES5 functions and var declarations
   matching the export's style, e.g. `function install(options) { ... }`.
 - `tests/mission-layout.test.cjs`: Node built-in tests, no extra dependencies.
