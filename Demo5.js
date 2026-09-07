@@ -2029,7 +2029,23 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_5 = function() {
 		this.stop();
-		
+
+		// ponytail: warm the HTTP cache for the 6 consultation clips (patient/family/
+		// nurse/computer/refer/monitor, up to 21MB each) the moment the user reaches
+		// the hotspot-selection screen - they're about to pick one, so this is the
+		// earliest point we know that without guessing which button they'll click.
+		// Sequential, not parallel, so one background fetch doesn't fight five others
+		// for bandwidth on a slow connection. Runs once even if this frame is
+		// revisited after closing a video popup.
+		if (!window._simsetPrefetchedClips) {
+		    window._simsetPrefetchedClips = true;
+		    ["patient", "family", "nurse", "computer", "refer", "monitor"].reduce(function(chain, name) {
+		        return chain.then(function() {
+		            return fetch("videos/" + name + ".mp4").catch(function() {});
+		        });
+		    }, Promise.resolve());
+		}
+
 		// ฟังก์ชันพิเศษสำหรับเปิดระบบปุ่มอย่างปลอดภัย (ถ้าหาไม่เจอจะไม่ทำให้ปุ่มอื่นล่ม)
 		function setupButton(btn, frameIndex) {
 		    if (btn) {
