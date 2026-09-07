@@ -2037,9 +2037,13 @@ if (reversed == null) { reversed = false; }
 		// Sequential, not parallel, so one background fetch doesn't fight five others
 		// for bandwidth on a slow connection. Runs once even if this frame is
 		// revisited after closing a video popup.
+		// M2-info.mp4/M2-into.mp4 (frame_12/frame_14) are unconditional next steps
+		// from here too - queued after the optional clips so they don't compete with
+		// whichever hotspot the user actually clicks first, but still get a head
+		// start over the old "only starts loading on arrival" behaviour.
 		if (!window._simsetPrefetchedClips) {
 		    window._simsetPrefetchedClips = true;
-		    ["patient", "family", "nurse", "computer", "refer", "monitor"].reduce(function(chain, name) {
+		    ["patient", "family", "nurse", "computer", "refer", "monitor", "M2-info", "M2-into"].reduce(function(chain, name) {
 		        return chain.then(function() {
 		            return fetch("videos/" + name + ".mp4").catch(function() {});
 		        });
@@ -2304,9 +2308,22 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_16 = function() {
 		this.stop();
-		
+
 		var root = this;
-		
+
+		// ponytail: same head-start trick as frame_5 - M3_info2.mp4/M3-into2.mp4
+		// (frame_18/frame_20) are unconditional next steps a few frames from here,
+		// and a 9-question quiz gives them a real window to finish downloading
+		// before they're needed. Runs once.
+		if (!window._simsetPrefetchedM3Clips) {
+		    window._simsetPrefetchedM3Clips = true;
+		    ["M3_info2", "M3-into2"].reduce(function(chain, name) {
+		        return chain.then(function() {
+		            return fetch("videos/" + name + ".mp4").catch(function() {});
+		        });
+		    }, Promise.resolve());
+		}
+
 		// 1. ตั้งค่าเฉลยข้อที่ถูกต้อง (มีทั้งหมด 9 ข้อ)
 		var correctAnswers = [1, 2, 13, 6, 8, 10, 16, 14, 12];
 		
