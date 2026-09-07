@@ -12,6 +12,8 @@
 <nav>
   <label>Frame <select id="frame"></select></label>
   <button id="show">Show frame</button>
+  <button id="open-patient">Open patient clip</button>
+  <button id="close-clip">Close clip</button>
   <button id="check">Check frame</button>
   <button id="check-all">Check all frames</button>
   <button id="hide">Hide controls</button>
@@ -73,11 +75,15 @@
     const videoVisible = Boolean(videoRect && videoStyle.display !== 'none' &&
       videoStyle.visibility !== 'hidden' && Number(videoStyle.opacity) !== 0 &&
       videoRect.width > 0 && videoRect.height > 0);
+    const transitionProperties = videoStyle?.transitionProperty.split(',').map(value => value.trim()) || [];
+    const motionOptimized = !video || (videoStyle.filter === 'none' &&
+      transitionProperties.includes('opacity') && transitionProperties.includes('transform'));
+    const backgroundStatic = !video || video.paused;
     const videoCovers = !introFrame || Boolean(videoVisible && videoRect.left <= 1 &&
       videoRect.top <= 1 && videoRect.right >= win.innerWidth - 1 &&
       videoRect.bottom >= win.innerHeight - 1);
-    return { frame, fits, covers, transparent, videoCovers,
-      pass: fits && covers && transparent && videoCovers };
+    return { frame, fits, covers, transparent, videoCovers, motionOptimized, backgroundStatic,
+      pass: fits && covers && transparent && videoCovers && motionOptimized && backgroundStatic };
   }
   const frameSelect = document.querySelector('#frame');
   for (let frame = 0; frame < 27; frame++) {
@@ -87,6 +93,13 @@
     frameSelect.append(option);
   }
   document.querySelector('#show').onclick = () => scene(Number(frameSelect.value));
+  document.querySelector('#open-patient').onclick = () => {
+    if (!scene(5)) return;
+    setTimeout(() => game.contentWindow.exportRoot.patient_btn.dispatchEvent('click'), 100);
+  };
+  document.querySelector('#close-clip').onclick = () => {
+    game.contentWindow.exportRoot?.esc_btn?.dispatchEvent('click');
+  };
   document.querySelector('#check').onclick = () => {
     const frame = Number(frameSelect.value);
     if (!scene(frame)) return;

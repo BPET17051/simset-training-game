@@ -26,6 +26,17 @@ unchanged. Portrait rotation guidance is retained. External assets are reused.
 Additional touched file: components/video/src/video.js (existing video widget).
 The following section records the previous prototype, not the current scope.
 
+## Smooth video opening (2026-09-07)
+
+- Reveal each clip only after its first frame is ready, using short opacity and
+  scale transitions that stay on the compositor.
+- Keep the full-viewport ambient copy on its first decoded frame. Do not run a
+  second live decoder or a full-screen blur while the foreground clip plays.
+- Preserve the exported widget transform and close-button placement. Respect
+  `prefers-reduced-motion` by revealing immediately without transitions.
+- Verify the patient open/close flow and all 27 timeline frames at mobile,
+  tablet and desktop sizes before deployment.
+
 Approved direction: fill the viewport with the room background and keep the
 instruction panel and START MISSION control at their original proportions.
 This first slice converts the Mission 1 instruction screen (timeline frame 4,
