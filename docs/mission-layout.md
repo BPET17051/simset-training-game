@@ -37,6 +37,23 @@ The following section records the previous prototype, not the current scope.
 - Verify the patient open/close flow and all 27 timeline frames at mobile,
   tablet and desktop sizes before deployment.
 
+## Full-system audit remediation (2026-09-07)
+
+- Advance the completed exercise from frame 25 to the existing end screen on
+  frame 26, and use distinct copy for completion and consent decline outcomes.
+- Persist the last accepted timeline frame (1-24) in session storage so an
+  accidental refresh can resume the lesson. Completion, decline and restart
+  clear the saved frame; partially completed quiz/game state intentionally
+  restarts within the restored frame.
+- Show a non-interactive progress indicator during timed, automatic video
+  frames. Preserve the required training sequence without adding a skip action.
+- Strengthen the consent-button affordance and add lightweight press feedback.
+  Keep the original labels, positions and click targets.
+- Provide an in-widget Thai error message when a video cannot load or play, and
+  retain the existing close action so the learner can recover.
+- The prior grey-gutter finding is already covered by the all-frame layout
+  adapter and remains protected by the 27-frame browser regression harness.
+
 Approved direction: fill the viewport with the room background and keep the
 instruction panel and START MISSION control at their original proportions.
 This first slice converts the Mission 1 instruction screen (timeline frame 4,

@@ -19,7 +19,7 @@
 			// The viewport copy uses compositor-only opacity/transform motion. A live
 			// full-screen blur repaints every video frame and causes visible stutter on
 			// mobile GPUs, so the ambient copy is darkened with opacity instead.
-			return "<div style='opacity:0;transition:opacity 180ms ease-out;'><video class='an-video-bg' muted preload='auto' style='position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;pointer-events:none;opacity:0;transform:scale(1.04) translateZ(0);transition:opacity 180ms ease-out,transform 240ms cubic-bezier(0.22,1,0.36,1);'/><video class='an-video-fg' style='position:relative;z-index:1;opacity:0;transform:scale(0.985) translateZ(0);transition:opacity 180ms ease-out,transform 220ms cubic-bezier(0.22,1,0.36,1);'/></div>";
+			return "<div style='opacity:0;transition:opacity 180ms ease-out;'><video class='an-video-bg' muted preload='auto' style='position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;pointer-events:none;opacity:0;transform:scale(1.04) translateZ(0);transition:opacity 180ms ease-out,transform 240ms cubic-bezier(0.22,1,0.36,1);'/><video class='an-video-fg' style='position:relative;z-index:1;opacity:0;transform:scale(0.985) translateZ(0);transition:opacity 180ms ease-out,transform 220ms cubic-bezier(0.22,1,0.36,1);'/><div class='an-video-error' role='alert' style='position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:2;padding:24px;box-sizing:border-box;background:rgba(0,0,0,0.78);color:#fff;font:600 18px/1.5 Google Sans,Tahoma,sans-serif;text-align:center;pointer-events:none;'>ไม่สามารถเล่นวิดีโอได้ กรุณาปิดหน้าต่างแล้วลองใหม่อีกครั้ง</div></div>";
 		},
 		getProperties: function() {
 			return this._props;
@@ -32,6 +32,15 @@
 			this._$div = $(this._element);
 			this._$this = this._$div.find('video.an-video-fg');
 			this._$bg = this._$div.find('video.an-video-bg');
+			this._$error = this._$div.find('.an-video-error');
+			var self = this;
+			this._$this.on("error.anVideo", function() {
+				self._revealed = true;
+				self._$div.css({ opacity: 1 });
+				self._$bg.css({ opacity: 0 });
+				self._$this.css({ opacity: 0 });
+				self._$error.css("display", "flex");
+			});
 			this._$bg.detach();
 			this._$bg.on("play.anVideo", function() { this.pause(); });
 			$("#animation_container").before(this._$bg);
@@ -82,6 +91,7 @@
 			this._revealFrame = null;
 			this._$div = null;
 			this._$bg = null;
+			this._$error = null;
 			$(parent).trigger("detached", this.getEventData("detached"));
 		},
 		getAttributes: function() {

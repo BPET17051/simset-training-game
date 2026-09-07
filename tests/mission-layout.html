@@ -14,6 +14,10 @@
   <button id="show">Show frame</button>
   <button id="open-patient">Open patient clip</button>
   <button id="close-clip">Close clip</button>
+  <button id="seed-resume">Seed resume frame 5</button>
+  <button id="complete-flow">Complete flow</button>
+  <button id="decline-flow">Decline flow</button>
+  <button id="report-frame">Report frame</button>
   <button id="check">Check frame</button>
   <button id="check-all">Check all frames</button>
   <button id="hide">Hide controls</button>
@@ -24,7 +28,7 @@
   const result = document.querySelector('#result');
   // This harness is for local QA, not a second production entry point.
   if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
-    game.src = '../index.html';
+    game.src = '../index.html?verify=20260907-audit-fixes-v3';
   } else {
     result.textContent = 'Local verification only';
     document.querySelectorAll('button').forEach(button => button.disabled = true);
@@ -69,6 +73,9 @@
     const transparent = win.canvas.style.backgroundColor === 'transparent' &&
       win.document.querySelector('#animation_container').style.backgroundColor === 'transparent';
     const introFrame = [1, 3, 12, 14, 18, 20].includes(frame);
+    const progress = win.document.querySelector('#video_progress');
+    const progressVisible = progress?.dataset.visible === 'true';
+    const progressState = introFrame ? progressVisible : !progressVisible;
     const video = win.document.querySelector('video.an-video-bg');
     const videoRect = video?.getBoundingClientRect();
     const videoStyle = video && win.getComputedStyle(video);
@@ -79,11 +86,13 @@
     const motionOptimized = !video || (videoStyle.filter === 'none' &&
       transitionProperties.includes('opacity') && transitionProperties.includes('transform'));
     const backgroundStatic = !video || video.paused;
+    const videoErrorReady = !video || Boolean(win.document.querySelector('.an-video-error[role="alert"]'));
     const videoCovers = !introFrame || Boolean(videoVisible && videoRect.left <= 1 &&
       videoRect.top <= 1 && videoRect.right >= win.innerWidth - 1 &&
       videoRect.bottom >= win.innerHeight - 1);
-    return { frame, fits, covers, transparent, videoCovers, motionOptimized, backgroundStatic,
-      pass: fits && covers && transparent && videoCovers && motionOptimized && backgroundStatic };
+    return { frame, fits, covers, transparent, videoCovers, motionOptimized, backgroundStatic, videoErrorReady,
+      progressState, pass: fits && covers && transparent && videoCovers && motionOptimized &&
+        backgroundStatic && videoErrorReady && progressState };
   }
   const frameSelect = document.querySelector('#frame');
   for (let frame = 0; frame < 27; frame++) {
@@ -99,6 +108,20 @@
   };
   document.querySelector('#close-clip').onclick = () => {
     game.contentWindow.exportRoot?.esc_btn?.dispatchEvent('click');
+  };
+  document.querySelector('#seed-resume').onclick = () => {
+    const win = game.contentWindow;
+    win.SimsetTrainingUI.accept(win.exportRoot);
+    win.exportRoot.gotoAndStop(5);
+  };
+  document.querySelector('#complete-flow').onclick = () => game.contentWindow.exportRoot.gotoAndStop(25);
+  document.querySelector('#decline-flow').onclick = () => {
+    const win = game.contentWindow;
+    win.exportRoot.gotoAndStop(0);
+    win.exportRoot.no_btn.dispatchEvent('click');
+  };
+  document.querySelector('#report-frame').onclick = () => {
+    result.textContent = 'Frame ' + game.contentWindow.exportRoot.currentFrame;
   };
   document.querySelector('#check').onclick = () => {
     const frame = Number(frameSelect.value);

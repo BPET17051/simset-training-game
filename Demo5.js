@@ -752,8 +752,8 @@ if (reversed == null) { reversed = false; }
 
 	// Layer_1
 	this.shape = new cjs.Shape();
-	this.shape.graphics.f("rgba(0,51,204,0.008)").s().p("A0RK8IAA13MAojAAAIAAV3g");
-	this.shape.setTransform(0.025,0);
+	this.shape.graphics.beginFill("rgba(244,248,255,0.18)").beginStroke("#0B57D0").setStrokeStyle(3).drawRoundRect(-129.75,-70.05,259.5,140.1,18);
+	this.shape.shadow = new cjs.Shadow("rgba(0,0,0,0.16)",0,4,10);
 
 	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
 
@@ -1912,6 +1912,19 @@ if (reversed == null) { reversed = false; }
 		this.stop();
 		
 		var root = this;
+		function addPressFeedback(button) {
+			if (!button) return;
+			button.removeAllEventListeners("mousedown");
+			button.removeAllEventListeners("pressup");
+			button.on("mousedown", function() {
+				cjs.Tween.get(this, {override:true}).to({scaleX:0.96,scaleY:0.96},80,cjs.Ease.quadOut);
+			});
+			button.on("pressup", function() {
+				cjs.Tween.get(this, {override:true}).to({scaleX:1,scaleY:1},120,cjs.Ease.quadOut);
+			});
+		}
+		addPressFeedback(root.yes_btn);
+		addPressFeedback(root.no_btn);
 		
 		// 🔇 สั่งปิดเสียงทั้งหมดก่อน (เผื่อกดวนกลับมาหน้าแรก)
 		createjs.Sound.stop();
@@ -1921,6 +1934,7 @@ if (reversed == null) { reversed = false; }
 		    root.yes_btn.cursor = "pointer";
 		    root.yes_btn.removeAllEventListeners("click");
 		    root.yes_btn.on("click", function() {
+		        SimsetTrainingUI.accept(root);
 		        root.gotoAndStop(1); // ย้ายไปเฟรม 2
 		    });
 		}
@@ -1930,6 +1944,7 @@ if (reversed == null) { reversed = false; }
 		    root.no_btn.cursor = "pointer";
 		    root.no_btn.removeAllEventListeners("click");
 		    root.no_btn.on("click", function() {
+		        SimsetTrainingUI.decline(root);
 		        root.gotoAndStop(26); // ย้ายไปเฟรม 27
 		    });
 		}
@@ -1939,16 +1954,14 @@ if (reversed == null) { reversed = false; }
 		this.stop();
 		var root = this;
 		
-		// สมมติว่าวิดีโอของคุณยาว 10 วินาที 
-		// ให้เปลี่ยนเลข 10000 เป็นเวลาของคุณ (สูตรคือ: จำนวนวินาที x 1000)
-		// เช่น ถ้ายาว 5 วินาที ให้ใส่ 5000 / ถ้ายาว 15 วินาที ให้ใส่ 15000
+		// วิดีโอเฟรม 2 เล่น 14.5 วินาที ก่อนเข้าเฟรม 3
 		var videoDuration = 14500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("จับเวลาครบตามความยาววิดีโอแล้ว ย้ายหน้าทันที!");
+		    console.log("คลิปเฟรม 2 เล่นครบ 14.5 วินาทีแล้ว ย้ายไปเฟรม 3 ทันที!");
 		    
-		    // ข้ามไปเฟรมที่ 4 (ซึ่งในโค้ดใช้เลข index คือ 3)
+		    // ไปเฟรม 3 (index 2)
 		    root.gotoAndStop(2); 
 		    
 		}, videoDuration);
@@ -1988,8 +2001,7 @@ if (reversed == null) { reversed = false; }
 		    
 		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. สั่งข้ามไปเฟรมที่ 5 
-		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
+		    // 3. ไปเฟรม 5 (index 4)
 		    root.gotoAndStop(4); 
 		    
 		}, videoDuration2);
@@ -2187,10 +2199,9 @@ if (reversed == null) { reversed = false; }
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
+		    console.log("คลิปเฟรม 13 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 14 ทันที!");
 		    
-		    // 3. สั่งข้ามไปเฟรมที่ 5 
-		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
+		    // 3. ไปเฟรม 14 (index 13)
 		    root.gotoAndStop(13); 
 		    
 		}, videoDuration3);
@@ -2221,15 +2232,14 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 4 วินาที
 		var videoDuration4 = 4000; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
+		    console.log("คลิปเฟรม 15 เล่นครบ 4 วินาทีแล้ว ย้ายไปเฟรม 16 ทันที!");
 		    
-		    // 3. สั่งข้ามไปเฟรมที่ 5 
-		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
+		    // 3. ไปเฟรม 16 (index 15)
 		    root.gotoAndStop(15); 
 		    
 		}, videoDuration4);
@@ -2606,15 +2616,14 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 1.5 วินาที
 		var videoDuration5 = 1500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
+		    console.log("คลิปเฟรม 19 เล่นครบ 1.5 วินาทีแล้ว ย้ายไปเฟรม 20 ทันที!");
 		    
-		    // 3. สั่งข้ามไปเฟรมที่ 5 
-		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
+		    // 3. ไปเฟรม 20 (index 19)
 		    root.gotoAndStop(19); 
 		    
 		}, videoDuration5);
@@ -2645,15 +2654,14 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 4.5 วินาที
 		var videoDuration6 = 4500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
+		    console.log("คลิปเฟรม 21 เล่นครบ 4.5 วินาทีแล้ว ย้ายไปเฟรม 22 ทันที!");
 		    
-		    // 3. สั่งข้ามไปเฟรมที่ 5 
-		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
+		    // 3. ไปเฟรม 22 (index 21)
 		    root.gotoAndStop(21); 
 		    
 		}, videoDuration6);
@@ -3217,6 +3225,11 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_25 = function() {
 		this.stop();
+		var root = this;
+		SimsetTrainingUI.complete(root);
+		setTimeout(function() {
+			if (root.currentFrame === 25) root.gotoAndStop(26);
+		}, 0);
 	}
 	this.frame_26 = function() {
 		this.stop();
@@ -3232,13 +3245,14 @@ if (reversed == null) { reversed = false; }
 		// 📢 ข้อความแจ้งเตือนก่อนปิดโปรแกรม (หน้าสุดท้ายของการเรียนรู้)
 		// ==========================================
 		var endNoticeId = "end_training_notice";
-		if (dom_overlay_container && !document.getElementById(endNoticeId)) {
-		    var endNotice = document.createElement("div");
+		var endNotice = document.getElementById(endNoticeId);
+		if (dom_overlay_container && !endNotice) {
+		    endNotice = document.createElement("div");
 		    endNotice.id = endNoticeId;
 		    endNotice.style.cssText = "position:absolute; left:60px; top:110px; width:1160px; padding:24px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:22px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
-		    endNotice.textContent = "สิ้นสุดการเรียนรู้แล้ว กรุณาถ่าย video หรือบันทึกเสียงของการขอคำปรึกษาจากโจทย์ที่แนบให้ ด้วยโทรศัพท์หรือกล้องของท่านเอง ให้ได้ยินเสียงของการปรึกษา แต่ไม่เห็นใบหน้าหรือสิ่งใดที่จะระบุตัวตนของท่าน";
 		    dom_overlay_container.appendChild(endNotice);
 		}
+		if (endNotice) endNotice.textContent = SimsetTrainingUI.completionMessage(root._simsetEndReason);
 
 		// ==========================================
 		// 🏠 ปุ่ม home_no -> วนกลับไปหน้าแรก (เฟรมที่ 1 / Index 0)
@@ -3249,6 +3263,7 @@ if (reversed == null) { reversed = false; }
 		    root.home_no.on("click", function() {
 		        var notice = document.getElementById(endNoticeId);
 		        if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
+		        SimsetTrainingUI.restart(root);
 		        root.gotoAndStop(0); // Index 0 = เฟรมที่ 1 ใน Adobe Animate
 		    });
 		}
@@ -3802,7 +3817,7 @@ lib.properties = {
 		{src:"sounds/Audio_intro.mp3?1788401219961", id:"Audio_intro"},
 		{src:"https://code.jquery.com/jquery-3.4.1.min.js?1788401219961", id:"lib/jquery-3.4.1.min.js"},
 		{src:"components/sdk/anwidget.js?1788401219961", id:"sdk/anwidget.js"},
-		{src:"components/video/src/video.js?20260907-smooth-motion", id:"an.Video"}
+		{src:"components/video/src/video.js?20260907-audit-fixes", id:"an.Video"}
 	],
 	preloads: []
 };
