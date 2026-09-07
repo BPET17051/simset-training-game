@@ -121,11 +121,9 @@
             if (root._simsetConsentAccepted) saveProgress(storage, frame);
         }
 
-        var saved = loadProgress(storage);
-        if (saved) {
-            root._simsetConsentAccepted = true;
-            global.setTimeout(function () { root.gotoAndStop(saved.frame); }, 0);
-        }
+        // ponytail: no auto-jump to a saved frame on load - team wants every page
+        // load to start at frame 0 like the original, matching what a click
+        // actually did rather than a stale sessionStorage entry from a prior visit.
         if (ticker && ticker.addEventListener) ticker.addEventListener('tick', sync);
         sync();
     }
