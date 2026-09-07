@@ -20,7 +20,12 @@
 			// multi-MB) source a second time in parallel with the real video, which is
 			// what made playback feel like it was loading forever. preload='auto' lets
 			// the single video start buffering the moment the popup attaches.
-			return "<div><video class='an-video-fg' preload='auto'/><div class='an-video-error' role='alert' style='position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:2;padding:24px;box-sizing:border-box;background:rgba(0,0,0,0.78);color:#fff;font:600 18px/1.5 Google Sans,Tahoma,sans-serif;text-align:center;pointer-events:none;'>ไม่สามารถเล่นวิดีโอได้ กรุณาปิดหน้าต่างแล้วลองใหม่อีกครั้ง</div></div>";
+			// object-fit:contain because the clips are NOT all the same aspect ratio -
+			// computer.mp4/refer.mp4 are 720x1280 portrait while every other clip is
+			// 16:9 landscape (ffprobe-verified). Without this the box's fixed CSS
+			// width/height stretched the portrait clips to fill it, distorting them and
+			// making the popup size look wrong/jerky compared to the landscape clips.
+			return "<div><video class='an-video-fg' preload='auto' style='object-fit:contain;'/><div class='an-video-error' role='alert' style='position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:2;padding:24px;box-sizing:border-box;background:rgba(0,0,0,0.78);color:#fff;font:600 18px/1.5 Google Sans,Tahoma,sans-serif;text-align:center;pointer-events:none;'>ไม่สามารถเล่นวิดีโอได้ กรุณาปิดหน้าต่างแล้วลองใหม่อีกครั้ง</div></div>";
 		},
 		getProperties: function() {
 			return this._props;
