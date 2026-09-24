@@ -3288,10 +3288,42 @@ if (reversed == null) { reversed = false; }
 		    // (box bottom ~228px vs art starting ~208px). Moved into the empty space
 		    // below the restart button instead of guessing a tighter font/padding
 		    // budget against art position we don't control from here.
-		    endNotice.style.cssText = "position:absolute; left:60px; top:580px; width:1160px; padding:18px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:20px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:none;";
+		    endNotice.style.cssText = "position:absolute; left:60px; top:580px; width:1160px; padding:18px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:20px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:auto; transform-origin:0 0;";
 		    dom_overlay_container.appendChild(endNotice);
+		    // The overlay is resized to the screen but its children are not scaled, so a box laid out
+		    // in 1280x720 stage px sat off-screen on small windows and misplaced on large ones.
+		    // Re-map it onto the current overlay size now and on every resize.
+		    var placeEndNotice = function () {
+		        var n = document.getElementById(endNoticeId);
+		        if (!n) return;
+		        var sx = dom_overlay_container.clientWidth / 1280;
+		        var sy = dom_overlay_container.clientHeight / 720;
+		        n.style.left = (60 * sx) + "px";
+		        n.style.top = (580 * sy) + "px";
+		        n.style.transform = "scale(" + Math.min(sx, sy) + ")";
+		    };
+		    placeEndNotice();
+		    setTimeout(placeEndNotice, 0);
+		    if (!window._simsetEndNoticeResize) {
+		        window._simsetEndNoticeResize = true;
+		        window.addEventListener("resize", function () { setTimeout(placeEndNotice, 0); });
+		    }
 		}
-		if (endNotice) endNotice.textContent = SimsetTrainingUI.completionMessage(root._simsetEndReason);
+		if (endNotice) {
+		    endNotice.textContent = SimsetTrainingUI.completionMessage(root._simsetEndReason);
+		    // Completed learners get a real, clickable link to the upload page (new tab so the game stays open).
+		    if (root._simsetEndReason !== 'declined') {
+		        var uploadLink = document.createElement("a");
+		        uploadLink.href = SimsetTrainingUI.UPLOAD_URL;
+		        uploadLink.target = "_blank";
+		        uploadLink.rel = "noopener";
+		        uploadLink.textContent = "หน้าส่งงาน SIMSET";
+		        uploadLink.style.cssText = "color:#FFD54F; font-weight:bold; text-decoration:underline;";
+		        endNotice.appendChild(document.createTextNode(" และส่งไฟล์ไปยัง "));
+		        endNotice.appendChild(uploadLink);
+		        endNotice.appendChild(document.createTextNode(" ขอบพระคุณที่ให้ความร่วมมือ"));
+		    }
+		}
 
 		// ==========================================
 		// 🏠 ปุ่ม home_no -> วนกลับไปหน้าแรก (เฟรมที่ 1 / Index 0)

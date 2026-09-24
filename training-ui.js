@@ -4,6 +4,8 @@
     global.SimsetTrainingUI = api;
 })(typeof window !== 'undefined' ? window : globalThis, function (global) {
     var STORAGE_KEY = 'simset-training-progress-v1';
+    // ponytail: points at the demo upload page for now; swap for the Apps Script URL when that backend exists.
+    var UPLOAD_URL = 'upload/#upload';
 
     function resumableFrame(frame) {
         return Number.isInteger(frame) && frame >= 1 && frame <= 24;
@@ -94,6 +96,7 @@
 
     return {
         STORAGE_KEY: STORAGE_KEY,
+        UPLOAD_URL: UPLOAD_URL,
         completionMessage: completionMessage,
         loadProgress: loadProgress,
         saveProgress: saveProgress,
