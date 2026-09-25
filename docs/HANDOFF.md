@@ -1,4 +1,4 @@
-# Development handoff: post-game recording upload
+# Development handoff: SIMSET training game
 
 Last updated: 2026-09-24 (end of session, home computer). Read this file before
 changing anything. It is written so a new Claude Code session can continue with
@@ -24,8 +24,8 @@ to commit `11baa63`.
   recording notice and the upload link are gone, and there is no loading
   screen, full-bleed layout, rotate prompt or video prefetching. The owner was
   told this before choosing A.
-- Kept (not part of the game): `upload/` demo page (+ `images/logo_title.png`
-  it uses), `docs/`, `CLAUDE.md`. The game no longer links to `/upload/`.
+- Kept (not part of the game): `docs/`, `CLAUDE.md`. The `upload/` demo page was
+  kept at first and then removed (see 0.2).
 - Sections 3-8 below describe the pre-revert state and are kept as history.
   Any future change to the game needs the owner's approval first.
 
@@ -69,14 +69,24 @@ clips tagged above common iPad support (High@5.0).
   Real Safari testing is still required for G1 (iPad tick below 24), G2 (autoplay
   blocked/frozen first frame) and G3 (Safari reload from decoded-image memory).
 
+## 0.2 Upload / recording-submission system removed (2026-09-25)
+
+The owner cancelled the post-game recording upload feature and the planned
+Google Apps Script backend. Removed from the repo and the site: `upload/`
+(`index.html`, `api.js`, `tests/api.test.js`) and `images/logo_title.png` (only
+that page and the old loading screen used it; it is not in the original export).
+`/upload/` no longer exists on production. **Sections 2-10 below describe that
+removed feature and are kept only as history; do not act on their next steps.**
+The standalone claude.ai Artifact mockup (section 1) and the home-computer
+`upload-mockup/` folder are outside this repo and were not touched.
+
 ## 1. Where things are
 
 | What | Where |
 | --- | --- |
 | Game source (this repo) | `github.com/BPET17051/simset-training-game`, branch `main`. **Repo is public.** |
 | Production | `https://simset-training-game.vercel.app` (Vercel project `simset-training-game`, team scope `jedis-projects-c5af893d`). Every push to `main` auto-deploys to production. |
-| Upload page (demo) | `https://simset-training-game.vercel.app/upload/` (`#upload` student form, `#review` teacher dashboard, `#end` mock end screen) |
-| Standalone mockup | Private-by-default claude.ai Artifact, shared publicly by the owner: `https://claude.ai/artifact/S2XC8mse6oxtWYHmF4Qcjw`. Its source is **not in this repo** (see section 9). |
+| Standalone mockup (feature cancelled) | Private-by-default claude.ai Artifact, shared publicly by the owner: `https://claude.ai/artifact/S2XC8mse6oxtWYHmF4Qcjw`. Its source is **not in this repo** (see section 9). |
 
 The repo carries ~1 GB of video/.fla. For code-only work, a blobless sparse clone
 is enough and takes seconds:
@@ -84,7 +94,7 @@ is enough and takes seconds:
 ```bash
 git clone --filter=blob:none --no-checkout https://github.com/BPET17051/simset-training-game.git
 cd simset-training-game
-git sparse-checkout set --no-cone "*.js" "*.html" "*.md" "tests/" "docs/" "upload/"
+git sparse-checkout set --no-cone "*.js" "*.html" "*.md" "tests/" "docs/"
 git checkout main
 ```
 
