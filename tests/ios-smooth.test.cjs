@@ -98,9 +98,10 @@ test('tuneStage on desktop: RAF ticks, mouse-over left as the original set it', 
   assert.equal(res.touchMode, false);
 });
 
-test('index wires viewport, helper load order, and stage tuning', () => {
+test('index keeps the original viewport, loads the helper first, and tunes the stage', () => {
   const html = readFileSync('index.html', 'utf8');
-  assert.match(html, /<meta name="authoring-tool" content="Adobe_Animate_CC">\s*<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">/);
+  // No viewport meta: it moved the canvas 52px on iPhone emulation (a visible layout change).
+  assert.doesNotMatch(html, /<meta name="viewport"/);
   assert.match(html, /<script src="components\/sdk\/createjs\.min\.js"><\/script>\s*<script src="components\/sdk\/ios-smooth\.js\?v=20260925"><\/script>[\s\S]*?<script src="Demo5\.js\?/);
   assert.match(html, /stage\.enableMouseOver\(\);\s*SimsetIOS\.tuneStage\(createjs, stage, window\);/);
 });

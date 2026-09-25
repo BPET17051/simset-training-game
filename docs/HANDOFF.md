@@ -43,9 +43,11 @@ clips tagged above common iPad support (High@5.0).
   devices, marks existing/future videos `playsinline`, and provides an opt-in
   green debug readout. `MAX_RATIO = 2` and `MAX_CANVAS_PIXELS = Infinity` are the
   calibration knobs; do not change the pixel cap without owner approval.
-- `index.html` loads the adapter before `Demo5.js`, tunes the stage after its
-  original `enableMouseOver()`, and declares a viewport with
-  `shrink-to-fit=no`. `patient.mp4`, `family.mp4` and `nurse.mp4` were losslessly
+- `index.html` loads the adapter before `Demo5.js` and tunes the stage after its
+  original `enableMouseOver()`. The viewport meta tag (fix for C5) was added and
+  then **removed** on 2026-09-25: it moved the canvas 52px on iPhone emulation
+  (y -69 -> -121), a visible layout change, and keeping it would need a change to
+  the original 1280px container. C5 is therefore not addressed. `patient.mp4`, `family.mp4` and `nurse.mp4` were losslessly
   re-tagged High@4.0; decoded-frame MD5s match commit `c31d07a`.
 - Debug with `<preview URL>/?debug=1`; add `&dpr=1.5` to try a lower backing
   ratio without changing deployed defaults. The box reports CreateJS/RAF fps,
@@ -57,10 +59,8 @@ clips tagged above common iPad support (High@5.0).
   reported tick 27.8, RAF 144, DPR 2/2, canvas 2560x1440, inline video and no
   game errors. iPad frame 0 and frame 4 canvas fractions matched `c31d07a`
   exactly: `[0, 0.063687, 1, 0.804469]`.
-- Open: Chromium still shrink-fits the fixed 1280px container (iPhone
-  `innerWidth` 1038 vs descriptor 750; iPad 1280 vs 1194), even with the
-  Safari-only hint. Do not change the container without owner approval. Real
-  Safari testing is still required for G1 (iPad tick below 24), G2 (autoplay
+- The emulation numbers above were taken with the viewport tag still present.
+  Real Safari testing is still required for G1 (iPad tick below 24), G2 (autoplay
   blocked/frozen first frame) and G3 (Safari reload from decoded-image memory).
 
 ## 1. Where things are
