@@ -10,95 +10,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="authoring-tool" content="Adobe_Animate_CC">
 <title>Demo5</title>
 <!-- write your code here -->
 <style>
-  html, body {
-	height:100%;
-	overflow:hidden;
-	background:#000;
-  }
-  /* ponytail: back to the blurred backdrop (deadline call) - decorative side panels always
-     look compressed on near-16:9 screens since the margin there is thin no matter what art
-     fills it (the panels themselves were correctly sized to the live margin, not the
-     problem). Static blurred copy of existing game art, not a live canvas capture - simplest
-     fix that reads as "ambient" rather than "cut off" regardless of margin width. Relies on
-     plain DOM order (div before #animation_container, no z-index) - z-index on a fixed
-     pseudo-element under a non-positioned body escapes to the root stacking context
-     unpredictably, confirmed by testing earlier. */
-  #ambient_bg {
-	position:fixed;
-	inset:-40px;
-	background:url("Assets/bg.jpg") center/cover no-repeat;
-	filter: blur(30px) brightness(0.70);
-  }
   #animation_container {
-	position:fixed;
+	position:absolute;
 	margin:auto;
 	left:0;right:0;
 	top:0;bottom:0;
   }
-  #mission_background {
-	display:none;
-	position:fixed;
-	inset:0;
-	width:100%;height:100%;
-	background:#f0f0f0;
-	pointer-events:none;
-  }
-  #rotate_prompt {
-	display:none;
-  }
-  @media (orientation:portrait) and (max-width:900px) {
-	#animation_container { display:none; }
-	#rotate_prompt {
-	  display:flex;
-	  position:fixed;
-	  inset:0;
-	  background:#000;
-	  color:#fff;
-	  flex-direction:column;
-	  align-items:center;
-	  justify-content:center;
-	  text-align:center;
-	  font-family:'Google Sans', Tahoma, sans-serif;
-	  padding:32px;
-	  box-sizing:border-box;
-	  z-index:1000;
-	}
-	#rotate_prompt .icon { font-size:64px; transform:rotate(90deg); margin-bottom:16px; }
-	#rotate_prompt p { font-size:20px; line-height:1.6; margin:0; }
-  }
-  #loading_screen {
-	position:fixed;
-	inset:0;
-	z-index:2000;
-	background:#000 url("Assets/bg.jpg") center/cover no-repeat;
-	display:flex;
-	flex-direction:column;
-	align-items:center;
-	justify-content:center;
-	box-sizing:border-box;
-	font-family:'Google Sans', Tahoma, sans-serif;
-	color:#fff;
-	text-align:center;
-	padding:24px;
-  }
-  #loading_screen::before {
-	content:"";
-	position:absolute;
-	inset:0;
-	background:rgba(0,0,0,0.6);
-  }
-  #loading_screen > * { position:relative; }
-  #title_logo { width:min(560px,85vw); height:auto; margin-bottom:24px; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
-  #title_faculty { font-size:14px; opacity:0.85; margin-bottom:36px; max-width:520px; }
-  #loading_label { font-size:16px; margin-bottom:12px; opacity:0.9; }
-  #loading_bar_track { width:min(400px,70vw); height:10px; border-radius:6px; background:rgba(255,255,255,0.25); overflow:hidden; }
-  #loading_bar { height:100%; width:0%; background:#4CAF50; transition:width 0.15s ease-out; }
-  #loading_pct { font-size:14px; margin-top:8px; opacity:0.85; }
 </style>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script>
@@ -136,7 +57,7 @@ function isFontAvailable(font, obj) {
 			obj.callOnLoad(font, obj.totalFonts);				
 			returnVal = true;				
 		}				
-		if(node) {				
+		if(node) {			
 			node.parentNode.removeChild(node);				
 			node = null;				
 		}				
@@ -152,9 +73,7 @@ function isFontAvailable(font, obj) {
 	var gFontsFamilies = ["Google Sans"];
 </script>
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Google+Sans:regular&subset=latin">
-<script src="Demo5.js?20260925-upload-link"></script>
-<script src="mission-layout.js?v=1"></script>
-<script src="training-ui.js?v=20260925-upload-link"></script>
+<script src="Demo5.js?1788401219967"></script>
 <script>
 var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
 function init() {
@@ -179,25 +98,15 @@ function init() {
 	var loader = new createjs.LoadQueue(false);
 	loader.installPlugin(createjs.Sound);
 	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
-	loader.addEventListener("progress", handleLoadProgress);
 	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
 	var lib=comp.getLibrary();
 	loader.loadManifest(lib.properties.manifest);
 }
-function handleLoadProgress(evt) {
-	var pct = Math.round(evt.progress * 100);
-	var bar = document.getElementById("loading_bar");
-	var txt = document.getElementById("loading_pct");
-	if (bar) bar.style.width = pct + "%";
-	if (txt) txt.textContent = pct + "%";
-}
 function handleFileLoad(evt, comp) {
-	var images=comp.getImages();
-	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }
+	var images=comp.getImages();	
+	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
 }
 function handleComplete(evt,comp) {
-	var loadingScreen = document.getElementById("loading_screen");
-	if (loadingScreen) loadingScreen.style.display = "none";
 	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
 	var lib=comp.getLibrary();
 	var ss=comp.getSpriteSheet();
@@ -216,26 +125,7 @@ function handleComplete(evt,comp) {
 		createjs.Ticker.addEventListener("tick", stage);
 	}	    
 	//Code to support hidpi screens and responsive scaling.
-	// ponytail: a throw in here used to abort the rest of handleComplete() -
-	// fnStartAnimation() (which starts the ticker) never ran, so the game froze
-	// on a half-drawn frame with no way to recover short of a manual reload.
-	// mission-layout's own resize() already retries itself on every frame change
-	// (previousFrame stays -1 until a resize() call succeeds), so once the ticker
-	// is running a transient failure here heals itself within a tick or two -
-	// but only if the ticker actually starts. Room art / video / training-flow
-	// are enhancements; the game booting is not allowed to depend on them.
-	try {
-		SimsetMissionLayout.install({root:exportRoot, stage:stage,
-			containers:[canvas,anim_container,dom_overlay_container],
-			roomImage:queue.getResult('Demo5_atlas_7')});
-	} catch (e) {
-		console.error('SimsetMissionLayout.install failed, continuing without it this tick:', e);
-	}
-	try {
-		SimsetTrainingUI.install({root:exportRoot, ticker:createjs.Ticker, document:document});
-	} catch (e) {
-		console.error('SimsetTrainingUI.install failed, continuing without it:', e);
-	}
+	AdobeAn.makeResponsive(true,'both',true,1,[canvas,anim_container,dom_overlay_container]);		
 	AdobeAn.compositionLoaded(lib.properties.id);
 	fnStartAnimation();
 }
@@ -245,31 +135,10 @@ function playSound(id, loop, offset) {
 <!-- write your code here -->
 </head>
 <body onload="init();" style="margin:0px;">
-	<!-- ponytail: warm the browser's HTTP cache for the two intro clips (28.6MB /
-	     4.5MB) as soon as parsing reaches here, in parallel with the LoadQueue's own
-	     image/font fetches - by the time consent is accepted and frame_1/frame_3
-	     attach their own <video>, most or all of the bytes are already cached. Not
-	     played, just buffered; upgrade path if still too slow is a smaller re-encode
-	     of All_intro_cut.mp4, which this can't fix on its own. -->
-	<video preload="auto" muted playsinline style="display:none" src="videos/All_intro_cut.mp4"></video>
-	<video preload="auto" muted playsinline style="display:none" src="videos/M1_into.mp4"></video>
-	<div id="ambient_bg"></div>
-	<canvas id="mission_background" aria-hidden="true"></canvas>
 	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:1280px; height:720px">
 		<canvas id="canvas" width="1280" height="720" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1280px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
 		</div>
-	</div>
-	<div id="rotate_prompt">
-		<div class="icon">&#128241;</div>
-		<p>กรุณาหมุนหน้าจอเป็นแนวนอนเพื่อเล่น<br>Please rotate your phone to landscape</p>
-	</div>
-	<div id="loading_screen">
-		<img id="title_logo" src="images/logo_title.png" alt="Emergency Consultation">
-		<div id="title_faculty">เกมจำลองสถานการณ์ทางการแพทย์ สำหรับฝึกทักษะการขอคำปรึกษา<br>คณะแพทยศาสตร์ศิริราชพยาบาล</div>
-		<div id="loading_label">กำลังโหลด...</div>
-		<div id="loading_bar_track"><div id="loading_bar"></div></div>
-		<div id="loading_pct">0%</div>
 	</div>
 </body>
 </html>

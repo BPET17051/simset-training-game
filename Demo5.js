@@ -1912,19 +1912,6 @@ if (reversed == null) { reversed = false; }
 		this.stop();
 		
 		var root = this;
-		function addPressFeedback(button) {
-			if (!button) return;
-			button.removeAllEventListeners("mousedown");
-			button.removeAllEventListeners("pressup");
-			button.on("mousedown", function() {
-				cjs.Tween.get(this, {override:true}).to({scaleX:0.96,scaleY:0.96},80,cjs.Ease.quadOut);
-			});
-			button.on("pressup", function() {
-				cjs.Tween.get(this, {override:true}).to({scaleX:1,scaleY:1},120,cjs.Ease.quadOut);
-			});
-		}
-		addPressFeedback(root.yes_btn);
-		addPressFeedback(root.no_btn);
 		
 		// 🔇 สั่งปิดเสียงทั้งหมดก่อน (เผื่อกดวนกลับมาหน้าแรก)
 		createjs.Sound.stop();
@@ -1934,7 +1921,6 @@ if (reversed == null) { reversed = false; }
 		    root.yes_btn.cursor = "pointer";
 		    root.yes_btn.removeAllEventListeners("click");
 		    root.yes_btn.on("click", function() {
-		        SimsetTrainingUI.accept(root);
 		        root.gotoAndStop(1); // ย้ายไปเฟรม 2
 		    });
 		}
@@ -1944,7 +1930,6 @@ if (reversed == null) { reversed = false; }
 		    root.no_btn.cursor = "pointer";
 		    root.no_btn.removeAllEventListeners("click");
 		    root.no_btn.on("click", function() {
-		        SimsetTrainingUI.decline(root);
 		        root.gotoAndStop(26); // ย้ายไปเฟรม 27
 		    });
 		}
@@ -1954,14 +1939,16 @@ if (reversed == null) { reversed = false; }
 		this.stop();
 		var root = this;
 		
-		// วิดีโอเฟรม 2 เล่น 14.5 วินาที ก่อนเข้าเฟรม 3
+		// สมมติว่าวิดีโอของคุณยาว 10 วินาที 
+		// ให้เปลี่ยนเลข 10000 เป็นเวลาของคุณ (สูตรคือ: จำนวนวินาที x 1000)
+		// เช่น ถ้ายาว 5 วินาที ให้ใส่ 5000 / ถ้ายาว 15 วินาที ให้ใส่ 15000
 		var videoDuration = 14500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 2 เล่นครบ 14.5 วินาทีแล้ว ย้ายไปเฟรม 3 ทันที!");
+		    console.log("จับเวลาครบตามความยาววิดีโอแล้ว ย้ายหน้าทันที!");
 		    
-		    // ไปเฟรม 3 (index 2)
+		    // ข้ามไปเฟรมที่ 4 (ซึ่งในโค้ดใช้เลข index คือ 3)
 		    root.gotoAndStop(2); 
 		    
 		}, videoDuration);
@@ -2001,7 +1988,8 @@ if (reversed == null) { reversed = false; }
 		    
 		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. ไปเฟรม 5 (index 4)
+		    // 3. สั่งข้ามไปเฟรมที่ 5 
+		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
 		    root.gotoAndStop(4); 
 		    
 		}, videoDuration2);
@@ -2029,27 +2017,7 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_5 = function() {
 		this.stop();
-
-		// ponytail: warm the HTTP cache for the 6 consultation clips (patient/family/
-		// nurse/computer/refer/monitor, up to 21MB each) the moment the user reaches
-		// the hotspot-selection screen - they're about to pick one, so this is the
-		// earliest point we know that without guessing which button they'll click.
-		// Sequential, not parallel, so one background fetch doesn't fight five others
-		// for bandwidth on a slow connection. Runs once even if this frame is
-		// revisited after closing a video popup.
-		// M2-info.mp4/M2-into.mp4 (frame_12/frame_14) are unconditional next steps
-		// from here too - queued after the optional clips so they don't compete with
-		// whichever hotspot the user actually clicks first, but still get a head
-		// start over the old "only starts loading on arrival" behaviour.
-		if (!window._simsetPrefetchedClips) {
-		    window._simsetPrefetchedClips = true;
-		    ["patient", "family", "nurse", "computer", "refer", "monitor", "M2-info", "M2-into"].reduce(function(chain, name) {
-		        return chain.then(function() {
-		            return fetch("videos/" + name + ".mp4").catch(function() {});
-		        });
-		    }, Promise.resolve());
-		}
-
+		
 		// ฟังก์ชันพิเศษสำหรับเปิดระบบปุ่มอย่างปลอดภัย (ถ้าหาไม่เจอจะไม่ทำให้ปุ่มอื่นล่ม)
 		function setupButton(btn, frameIndex) {
 		    if (btn) {
@@ -2219,9 +2187,10 @@ if (reversed == null) { reversed = false; }
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 13 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 14 ทันที!");
+		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. ไปเฟรม 14 (index 13)
+		    // 3. สั่งข้ามไปเฟรมที่ 5 
+		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
 		    root.gotoAndStop(13); 
 		    
 		}, videoDuration3);
@@ -2252,14 +2221,15 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 4 วินาที
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
 		var videoDuration4 = 4000; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 15 เล่นครบ 4 วินาทีแล้ว ย้ายไปเฟรม 16 ทันที!");
+		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. ไปเฟรม 16 (index 15)
+		    // 3. สั่งข้ามไปเฟรมที่ 5 
+		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
 		    root.gotoAndStop(15); 
 		    
 		}, videoDuration4);
@@ -2308,22 +2278,9 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_16 = function() {
 		this.stop();
-
+		
 		var root = this;
-
-		// ponytail: same head-start trick as frame_5 - M3_info2.mp4/M3-into2.mp4
-		// (frame_18/frame_20) are unconditional next steps a few frames from here,
-		// and a 9-question quiz gives them a real window to finish downloading
-		// before they're needed. Runs once.
-		if (!window._simsetPrefetchedM3Clips) {
-		    window._simsetPrefetchedM3Clips = true;
-		    ["M3_info2", "M3-into2"].reduce(function(chain, name) {
-		        return chain.then(function() {
-		            return fetch("videos/" + name + ".mp4").catch(function() {});
-		        });
-		    }, Promise.resolve());
-		}
-
+		
 		// 1. ตั้งค่าเฉลยข้อที่ถูกต้อง (มีทั้งหมด 9 ข้อ)
 		var correctAnswers = [1, 2, 13, 6, 8, 10, 16, 14, 12];
 		
@@ -2649,14 +2606,15 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 1.5 วินาที
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
 		var videoDuration5 = 1500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 19 เล่นครบ 1.5 วินาทีแล้ว ย้ายไปเฟรม 20 ทันที!");
+		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. ไปเฟรม 20 (index 19)
+		    // 3. สั่งข้ามไปเฟรมที่ 5 
+		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
 		    root.gotoAndStop(19); 
 		    
 		}, videoDuration5);
@@ -2687,14 +2645,15 @@ if (reversed == null) { reversed = false; }
 		this.stop(); 
 		var root = this;
 		
-		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ 4.5 วินาที
+		// 2. ตั้งเวลาความยาวของคลิปวิดีโอ (5 วินาที = 5000 มิลลิวินาที)
 		var videoDuration6 = 4500; 
 		
 		setTimeout(function() {
 		    
-		    console.log("คลิปเฟรม 21 เล่นครบ 4.5 วินาทีแล้ว ย้ายไปเฟรม 22 ทันที!");
+		    console.log("คลิปเฟรม 4 เล่นครบ 5 วินาทีแล้ว ย้ายไปเฟรม 5 ทันที!");
 		    
-		    // 3. ไปเฟรม 22 (index 21)
+		    // 3. สั่งข้ามไปเฟรมที่ 5 
+		    // (ในโปรแกรมคือเฟรม 5 แต่โค้ดต้องใช้เลข index คือ 4 เพราะเริ่มนับจาก 0)
 		    root.gotoAndStop(21); 
 		    
 		}, videoDuration6);
@@ -3258,11 +3217,6 @@ if (reversed == null) { reversed = false; }
 	}
 	this.frame_25 = function() {
 		this.stop();
-		var root = this;
-		SimsetTrainingUI.complete(root);
-		setTimeout(function() {
-			if (root.currentFrame === 25) root.gotoAndStop(26);
-		}, 0);
 	}
 	this.frame_26 = function() {
 		this.stop();
@@ -3275,66 +3229,12 @@ if (reversed == null) { reversed = false; }
 		}
 		
 		// ==========================================
-		// 📢 ข้อความแจ้งเตือนก่อนปิดโปรแกรม (หน้าสุดท้ายของการเรียนรู้)
-		// ==========================================
-		var endNoticeId = "end_training_notice";
-		var endNotice = document.getElementById(endNoticeId);
-		if (dom_overlay_container && !endNotice) {
-		    endNotice = document.createElement("div");
-		    endNotice.id = endNoticeId;
-		    // ponytail: was top:110px, right where the baked "กรุณาติดต่อ...pre-survey"
-		    // canvas art starts - the 2-line "completed" message (longer than the
-		    // 1-line "declined" one) grew tall enough to overlap it, verified live
-		    // (box bottom ~228px vs art starting ~208px). Moved into the empty space
-		    // below the restart button instead of guessing a tighter font/padding
-		    // budget against art position we don't control from here.
-		    endNotice.style.cssText = "position:absolute; left:60px; top:580px; width:1160px; padding:18px 32px; box-sizing:border-box; background:rgba(0,0,0,0.75); color:#FFFFFF; font-family:'Google Sans', Tahoma, sans-serif; font-size:20px; line-height:1.6; text-align:center; border-radius:16px; pointer-events:auto; transform-origin:0 0;";
-		    dom_overlay_container.appendChild(endNotice);
-		    // The overlay is resized to the screen but its children are not scaled, so a box laid out
-		    // in 1280x720 stage px sat off-screen on small windows and misplaced on large ones.
-		    // Re-map it onto the current overlay size now and on every resize.
-		    var placeEndNotice = function () {
-		        var n = document.getElementById(endNoticeId);
-		        if (!n) return;
-		        var sx = dom_overlay_container.clientWidth / 1280;
-		        var sy = dom_overlay_container.clientHeight / 720;
-		        n.style.left = (60 * sx) + "px";
-		        n.style.top = (580 * sy) + "px";
-		        n.style.transform = "scale(" + Math.min(sx, sy) + ")";
-		    };
-		    placeEndNotice();
-		    setTimeout(placeEndNotice, 0);
-		    if (!window._simsetEndNoticeResize) {
-		        window._simsetEndNoticeResize = true;
-		        window.addEventListener("resize", function () { setTimeout(placeEndNotice, 0); });
-		    }
-		}
-		if (endNotice) {
-		    endNotice.textContent = SimsetTrainingUI.completionMessage(root._simsetEndReason);
-		    // Completed learners get a real, clickable link to the upload page (new tab so the game stays open).
-		    if (root._simsetEndReason !== 'declined') {
-		        var uploadLink = document.createElement("a");
-		        uploadLink.href = SimsetTrainingUI.UPLOAD_URL;
-		        uploadLink.target = "_blank";
-		        uploadLink.rel = "noopener";
-		        uploadLink.textContent = "หน้าส่งงาน SIMSET";
-		        uploadLink.style.cssText = "color:#FFD54F; font-weight:bold; text-decoration:underline;";
-		        endNotice.appendChild(document.createTextNode(" และส่งไฟล์ไปยัง "));
-		        endNotice.appendChild(uploadLink);
-		        endNotice.appendChild(document.createTextNode(" ขอบพระคุณที่ให้ความร่วมมือ"));
-		    }
-		}
-
-		// ==========================================
 		// 🏠 ปุ่ม home_no -> วนกลับไปหน้าแรก (เฟรมที่ 1 / Index 0)
 		// ==========================================
 		if (root.home_no) {
 		    root.home_no.cursor = "pointer";
 		    root.home_no.removeAllEventListeners("click");
 		    root.home_no.on("click", function() {
-		        var notice = document.getElementById(endNoticeId);
-		        if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
-		        SimsetTrainingUI.restart(root);
 		        root.gotoAndStop(0); // Index 0 = เฟรมที่ 1 ใน Adobe Animate
 		    });
 		}
@@ -3390,7 +3290,7 @@ if (reversed == null) { reversed = false; }
 
 	this.esc_btn = new lib.esc();
 	this.esc_btn.name = "esc_btn";
-	this.esc_btn.setTransform(1200,117.35);
+	this.esc_btn.setTransform(1123.5,117.35);
 	this.esc_btn._off = true;
 	new cjs.ButtonHelper(this.esc_btn, 0, 1, 1);
 
@@ -3487,7 +3387,7 @@ if (reversed == null) { reversed = false; }
 	this.home_no.setTransform(640.75,474.1);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.yes_btn},{t:this.no_btn}]}).to({state:[]},1).to({state:[{t:this.press_start}]},1).to({state:[]},1).to({state:[{t:this.next_btn5}]},1).to({state:[{t:this.patient_btn},{t:this.com_btn},{t:this.paper_btn},{t:this.monitor_btn},{t:this.nurse_btn},{t:this.fam_btn},{t:this.next_btn6}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[{t:this.esc_btn}]},1).to({state:[]},1).to({state:[{t:this.next_btn14}]},1).to({state:[]},1).to({state:[{t:this.next_btn16},{t:this.back_btn16}]},1).to({state:[{t:this.submit_btn17},{t:this.info_btn}]},1).to({state:[{t:this.scroll_bar},{t:this.next_btn18},{t:this.esc_btn18}]},1).to({state:[]},1).to({state:[{t:this.next_btn20}]},1).to({state:[]},1).to({state:[{t:this.next_btn22},{t:this.back_btn22}]},1).to({state:[{t:this.submit_btn3},{t:this.reset_btn},{t:this.solution_btn},{t:this.warning_txt},{t:this.congrate}]},1).to({state:[{t:this.info_btn24},{t:this.next_btn24}]},1).to({state:[{t:this.esc_btn25},{t:this.scroll_bar2}]},1).to({state:[]},1).to({state:[{t:this.home_no}]},1).wait(1));
-	this.timeline.addTween(cjs.Tween.get(this.esc_btn).wait(6).to({_off:false},0).wait(3).to({scaleX:1.0038,scaleY:1.0038,x:950,y:80},0).wait(1).to({scaleX:1,scaleY:1},0).wait(1).to({x:1200,y:117.35},0).to({_off:true},1).wait(15));
+	this.timeline.addTween(cjs.Tween.get(this.esc_btn).wait(6).to({_off:false},0).wait(3).to({scaleX:1.0038,scaleY:1.0038,x:950,y:80},0).wait(1).to({scaleX:1,scaleY:1},0).wait(1).to({x:1123.5,y:117.35},0).to({_off:true},1).wait(15));
 
 	// mask_idn (mask)
 	var mask = new cjs.Shape();
@@ -3725,17 +3625,17 @@ if (reversed == null) { reversed = false; }
 	this.patient = new lib.an_Video({'id': 'patient', 'src':'videos/patient.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.patient.name = "patient";
-	this.patient.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.patient.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.family = new lib.an_Video({'id': 'family', 'src':'videos/family.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.family.name = "family";
-	this.family.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.family.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.nurse = new lib.an_Video({'id': 'nurse', 'src':'videos/nurse.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.nurse.name = "nurse";
-	this.nurse.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.nurse.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.computer = new lib.an_Video({'id': 'computer', 'src':'videos/computer.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
@@ -3750,7 +3650,7 @@ if (reversed == null) { reversed = false; }
 	this.monitor = new lib.an_Video({'id': 'monitor', 'src':'videos/monitor.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':true, 'poster':'', 'preload':true, 'class':'video'});
 
 	this.monitor.name = "monitor";
-	this.monitor.setTransform(640,364.95,2.49,1.8675,0,0,0,200.2,149.9);
+	this.monitor.setTransform(570.8,364.95,2.49,1.8675,0,0,0,200.2,149.9);
 
 	this.intro_video3 = new lib.an_Video({'id': 'intro_video3', 'src':'videos/M2-info.mp4', 'autoplay':true, 'controls':false, 'muted':false, 'loop':false, 'poster':'', 'preload':true, 'class':'video'});
 
@@ -3888,7 +3788,7 @@ lib.properties = {
 		{src:"sounds/Audio_intro.mp3?1788401219961", id:"Audio_intro"},
 		{src:"https://code.jquery.com/jquery-3.4.1.min.js?1788401219961", id:"lib/jquery-3.4.1.min.js"},
 		{src:"components/sdk/anwidget.js?1788401219961", id:"sdk/anwidget.js"},
-		{src:"components/video/src/video.js?20260907-object-fit-contain", id:"an.Video"}
+		{src:"components/video/src/video.js?1788401219961", id:"an.Video"}
 	],
 	preloads: []
 };
@@ -3964,13 +3864,9 @@ an.makeResponsive = function(isResp, respDim, isScale, scaleType, domContainers)
 			else if(scaleType==1) {					
 				sRatio = Math.min(xRatio, yRatio);				
 			}				
-			else if(scaleType==2) {
-				// ponytail: cap cover-fit crop so UI placed close to the canvas edge (e.g. "PRESS START")
-				// doesn't get cut off on wide/tall windows. Raise MAX_OVERSCALE only after checking every
-				// frame's edge-adjacent elements at the wider aspect - see frame_1/press_start regression.
-				var MAX_OVERSCALE = 1.06;
-				sRatio = Math.min(Math.max(xRatio, yRatio), Math.min(xRatio, yRatio) * MAX_OVERSCALE);
-			}
+			else if(scaleType==2) {					
+				sRatio = Math.max(xRatio, yRatio);				
+			}			
 		}
 		domContainers[0].width = w * pRatio * sRatio;			
 		domContainers[0].height = h * pRatio * sRatio;

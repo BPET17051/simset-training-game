@@ -4,6 +4,31 @@ Last updated: 2026-09-24 (end of session, home computer). Read this file before
 changing anything. It is written so a new Claude Code session can continue with
 no access to the previous conversation.
 
+## 0. Update 2026-09-25: game restored to the client's original
+
+After the 2026-09-25 meeting the client asked for the game to match the original
+exactly (option "A, 100% original"). The original is Google Drive folder `Demo5`
+(id `19-4Qtg4Lbd6QGpWcdMTlKPaun1hUFcKr`, uploaded 2026-09-03), which is identical
+to commit `11baa63`.
+
+- `index.html` is now a byte-for-byte copy of the original `Demo5.html`;
+  `Demo5.js` and `components/video/src/video.js` are the original files
+  (git blob hashes equal to `11baa63`).
+- Removed: `mission-layout.js`, `training-ui.js`, their tests
+  (`tests/mission-layout.*`, `tests/training-ui.test.cjs`), and the unused
+  `images/panel_left.png` / `images/panel_right.png`.
+- This drops every game change listed in sections 3-8 below, including known
+  fixes of the original: frame 25 no longer auto-advances to frame 26 (end
+  screen), the video close button is at x 1123.5 again (can be covered by the
+  video), consultation videos are at x 570.8 (off-centre), the end-of-training
+  recording notice and the upload link are gone, and there is no loading
+  screen, full-bleed layout, rotate prompt or video prefetching. The owner was
+  told this before choosing A.
+- Kept (not part of the game): `upload/` demo page (+ `images/logo_title.png`
+  it uses), `docs/`, `CLAUDE.md`. The game no longer links to `/upload/`.
+- Sections 3-8 below describe the pre-revert state and are kept as history.
+  Any future change to the game needs the owner's approval first.
+
 ## 1. Where things are
 
 | What | Where |
@@ -172,7 +197,9 @@ On the home computer, folder `D:\Jedi_EX_HDX_BAC01\01.Jedi_SIMSET\SIMSET_Project
    `<studentId>_<timestamp>.<ext>`); Sheet rows for roster, submissions and
    reviews; teacher view restricted to an allowlist of Google accounts; Drive
    folder and Sheet shared only with teachers.
-3. Point `SimsetTrainingUI.UPLOAD_URL` in `training-ui.js` at the deployed Apps
-   Script URL, bump the query string, preview, then release.
+3. Agree with the owner/client how learners reach the upload page now that the
+   game is the unmodified original (e.g. a link given outside the game, or an
+   approved change to the original end screen). `training-ui.js` and its
+   `UPLOAD_URL` were removed on 2026-09-25.
 4. Remove the demo bar, the `#end` mock view and `resetDemo` from the real page.
 5. Pilot with 3-5 learners and a teacher before opening to everyone.
