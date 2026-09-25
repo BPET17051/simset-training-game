@@ -98,6 +98,13 @@ test('tuneStage on desktop: RAF ticks, mouse-over left as the original set it', 
   assert.equal(res.touchMode, false);
 });
 
+test('index gives slow connections 2 minutes per asset before starting the manifest', () => {
+  // CreateJS' default 8 s per-file timeout marked slow atlases as failed and crashed
+  // handleComplete (SpriteSheet of undefined) on first visits over weak mobile data.
+  const html = readFileSync('index.html', 'utf8');
+  assert.match(html, /createjs\.LoadItem\.LOAD_TIMEOUT_DEFAULT = 120000;[\s\S]*?loader\.loadManifest\(/);
+});
+
 test('index keeps the original viewport, loads the helper first, and tunes the stage', () => {
   const html = readFileSync('index.html', 'utf8');
   // No viewport meta: it moved the canvas 52px on iPhone emulation (a visible layout change).

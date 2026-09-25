@@ -96,6 +96,7 @@ function init() {
 			});
 		}
 	} catch(e) {};
+	createjs.LoadItem.LOAD_TIMEOUT_DEFAULT = 120000;
 	var loader = new createjs.LoadQueue(false);
 	loader.installPlugin(createjs.Sound);
 	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});

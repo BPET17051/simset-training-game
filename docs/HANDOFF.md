@@ -49,6 +49,12 @@ clips tagged above common iPad support (High@5.0).
   (y -69 -> -121), a visible layout change, and keeping it would need a change to
   the original 1280px container. C5 is therefore not addressed. `patient.mp4`, `family.mp4` and `nurse.mp4` were losslessly
   re-tagged High@4.0; decoded-frame MD5s match commit `c31d07a`.
+- Slow-network crash (pre-existing in the original, found on production
+  2026-09-25): CreateJS gives each file 8 s by default. On a first visit over weak
+  mobile data a slow atlas was marked failed, `queue.getResult()` returned
+  undefined and `handleComplete` threw `reading 'getContext'` (blank white game).
+  `index.html` now sets `createjs.LoadItem.LOAD_TIMEOUT_DEFAULT = 120000` before
+  `loadManifest`. No visual change.
 - Debug with `<preview URL>/?debug=1`; add `&dpr=1.5` to try a lower backing
   ratio without changing deployed defaults. The box reports CreateJS/RAF fps,
   real/used DPR, canvas/CSS dimensions, hover mode, video readiness/inline state
