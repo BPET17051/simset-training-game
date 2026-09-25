@@ -27,7 +27,41 @@ to commit `11baa63`.
 - Kept (not part of the game): `upload/` demo page (+ `images/logo_title.png`
   it uses), `docs/`, `CLAUDE.md`. The game no longer links to `/upload/`.
 - Sections 3-8 below describe the pre-revert state and are kept as history.
-  Any future change to the game needs the owner's approval first.
+Any future change to the game needs the owner's approval first.
+
+## 0.1 iOS smoothness (2026-09-25)
+
+Preview branch `revert/original-demo5` adds a dependency-free iOS adapter without
+editing `Demo5.js`, `components/video/src/video.js`, images or visible game design.
+The causes addressed are: C1 retina 3x canvas over-rendering; C2 timeout-based
+ticks; C3 mouse-over hit testing on touch; C4 late touch enablement; C5 missing
+viewport control; C6 videos not marked for inline playback; and C7 three 1080p
+clips tagged above common iPad support (High@5.0).
+
+- `components/sdk/ios-smooth.js` caps reported DPR at 2, uses RAF-synchronised
+  CreateJS ticks, disables mouse-over and enables CreateJS touch on touch-only
+  devices, marks existing/future videos `playsinline`, and provides an opt-in
+  green debug readout. `MAX_RATIO = 2` and `MAX_CANVAS_PIXELS = Infinity` are the
+  calibration knobs; do not change the pixel cap without owner approval.
+- `index.html` loads the adapter before `Demo5.js`, tunes the stage after its
+  original `enableMouseOver()`, and declares a viewport with
+  `shrink-to-fit=no`. `patient.mp4`, `family.mp4` and `nurse.mp4` were losslessly
+  re-tagged High@4.0; decoded-frame MD5s match commit `c31d07a`.
+- Debug with `<preview URL>/?debug=1`; add `&dpr=1.5` to try a lower backing
+  ratio without changing deployed defaults. The box reports CreateJS/RAF fps,
+  real/used DPR, canvas/CSS dimensions, hover mode, video readiness/inline state
+  and recent JavaScript errors.
+- Local Chromium emulation: desktop frame 0 pixel diff was 0 at 1280x720 DPR 1
+  and 1920x1080 DPR 2. iPhone emulation reported tick 26.9, RAF 132, real/used
+  DPR 3/2, canvas 2076x1168, inline playing video and no game errors. iPad
+  reported tick 27.8, RAF 144, DPR 2/2, canvas 2560x1440, inline video and no
+  game errors. iPad frame 0 and frame 4 canvas fractions matched `c31d07a`
+  exactly: `[0, 0.063687, 1, 0.804469]`.
+- Open: Chromium still shrink-fits the fixed 1280px container (iPhone
+  `innerWidth` 1038 vs descriptor 750; iPad 1280 vs 1194), even with the
+  Safari-only hint. Do not change the container without owner approval. Real
+  Safari testing is still required for G1 (iPad tick below 24), G2 (autoplay
+  blocked/frozen first frame) and G3 (Safari reload from decoded-image memory).
 
 ## 1. Where things are
 
