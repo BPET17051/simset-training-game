@@ -24,7 +24,7 @@ const videos = {
 function probe(name) {
   const raw = execFileSync('ffprobe', [
     '-v', 'error', '-show_entries',
-    'format=duration:stream=codec_type,codec_name,width,height,r_frame_rate,sample_rate,channels',
+    'format=duration:stream=codec_type,codec_name,width,height,r_frame_rate,sample_rate,channels,level',
     '-of', 'json', path.join(root, 'videos', name),
   ], { encoding: 'utf8' });
   return JSON.parse(raw);
@@ -65,6 +65,7 @@ test('the 12 game videos stay compatible while their combined size is below 45 M
     assert.equal(video.codec_name, 'h264', name);
     assert.equal(`${video.width}x${video.height}`, dimensions, name);
     assert.equal(video.r_frame_rate, fps, name);
+    assert.ok(video.level <= 42, `${name} H.264 level is ${video.level}`);
     assert.ok(Math.abs(Number(metadata.format.duration) - duration) <= 0.08, name);
     if (audioExpected) {
       assert.deepEqual([audio.codec_name, audio.sample_rate, audio.channels], audioExpected, name);
