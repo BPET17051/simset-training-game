@@ -11,6 +11,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="authoring-tool" content="Adobe_Animate_CC">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demo5</title>
 <!-- write your code here -->
 <style>
@@ -22,6 +23,7 @@
   }
 </style>
 <script src="components/sdk/createjs.min.js"></script>
+<script src="components/sdk/ios-smooth.js?v=20260925"></script>
 <script>
 function LoadGFonts(families, comp) {				
 	var lib=comp.getLibrary();				
@@ -118,6 +120,7 @@ function handleComplete(evt,comp) {
 	exportRoot = new lib.Demo5();
 	stage = new lib.Stage(canvas);
 	stage.enableMouseOver();	
+	SimsetIOS.tuneStage(createjs, stage, window);
 	//Registers the "tick" event listener.
 	fnStartAnimation = function() {
 		stage.addChild(exportRoot);

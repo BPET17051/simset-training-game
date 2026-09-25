@@ -8,4 +8,4 @@ and `docs/mission-layout.md` (layout/video history).
 - This repo is public: never commit student data, rosters or secrets.
 - Since 2026-09-25 the game (`index.html`, `Demo5.js`, `components/`) is the client's
   original Drive export, byte for byte. Do not modify it without the owner's approval.
-- Tests: `node --test upload/tests/api.test.js`
+- Tests: `node --test tests/ios-smooth.test.cjs tests/performance-assets.test.cjs upload/tests/api.test.js`

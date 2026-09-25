@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
+const { readFileSync } = require('node:fs');
 const ios = require('../components/sdk/ios-smooth.js');
 
 test('original game files stay byte-identical', () => {
@@ -95,4 +96,11 @@ test('tuneStage on desktop: RAF ticks, mouse-over left as the original set it', 
   assert.equal(cjs.Ticker.timingMode, 'synched');
   assert.deepEqual(cjs.calls, []);
   assert.equal(res.touchMode, false);
+});
+
+test('index wires viewport, helper load order, and stage tuning', () => {
+  const html = readFileSync('index.html', 'utf8');
+  assert.match(html, /<meta name="authoring-tool" content="Adobe_Animate_CC">\s*<meta name="viewport" content="width=device-width, initial-scale=1">/);
+  assert.match(html, /<script src="components\/sdk\/createjs\.min\.js"><\/script>\s*<script src="components\/sdk\/ios-smooth\.js\?v=20260925"><\/script>[\s\S]*?<script src="Demo5\.js\?/);
+  assert.match(html, /stage\.enableMouseOver\(\);\s*SimsetIOS\.tuneStage\(createjs, stage, window\);/);
 });
