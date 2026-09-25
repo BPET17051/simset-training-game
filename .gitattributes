@@ -3,3 +3,4 @@
 *.MP4 filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.MOV filter=lfs diff=lfs merge=lfs -text
+components/sdk/createjs.min.js -text
