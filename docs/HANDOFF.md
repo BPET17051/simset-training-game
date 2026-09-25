@@ -27,7 +27,7 @@ to commit `11baa63`.
 - Kept (not part of the game): `upload/` demo page (+ `images/logo_title.png`
   it uses), `docs/`, `CLAUDE.md`. The game no longer links to `/upload/`.
 - Sections 3-8 below describe the pre-revert state and are kept as history.
-Any future change to the game needs the owner's approval first.
+  Any future change to the game needs the owner's approval first.
 
 ## 0.1 iOS smoothness (2026-09-25)
 
