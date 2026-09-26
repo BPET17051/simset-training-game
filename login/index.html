@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Siconverse - เข้าสู่ระบบ</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Google+Sans:regular,bold&subset=latin">
+<style>
+  :root {
+    --ink:#0b2f6b; --card:#ffffff; --field:#f3f6fb; --text:#1c2733; --muted:#5a6675;
+    --blue:#1f6fe5; --blue-dark:#0b3a8c; --red:#d62a1e; --red-soft:#fde4e1;
+    --yellow:#ffd000; --orange:#e8261c;
+  }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin:0; color:var(--text); font-family:'Google Sans', Tahoma, sans-serif; font-size:16px;
+    background:#000 url("../Assets/bg.jpg") center/cover no-repeat fixed;
+    display:flex; align-items:center; justify-content:center; padding:24px 16px; overflow:auto;
+  }
+  body::before { content:""; position:fixed; inset:0; background:rgba(0,0,0,.55); }
+  main { position:relative; width:100%; max-width:380px; }
+  .brand { text-align:center; margin:0 0 18px; }
+  .brand img { display:block; width:100%; max-width:380px; height:auto; margin:0 auto; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+  .tagline { margin:10px 0 0; color:#fff; font-size:14px; text-shadow:0 2px 0 #000, 0 0 6px #000; }
+  .card { background:var(--card); border:4px solid var(--ink); box-shadow:8px 8px 0 rgba(0,0,0,.45); padding:22px 20px 20px; }
+  h1 { font-size:20px; margin:0 0 16px; }
+  label { display:block; font-weight:bold; margin:14px 0 6px; font-size:15px; }
+  .field { position:relative; }
+  input[type=text], input[type=password] {
+    width:100%; font:inherit; color:var(--text); padding:12px; min-height:48px;
+    background:var(--field); border:3px solid var(--ink); border-radius:0;
+  }
+  #toggle {
+    position:absolute; right:6px; top:50%; transform:translateY(-50%); min-height:36px;
+    font:inherit; font-size:13px; font-weight:bold; background:#fff; color:var(--ink);
+    border:2px solid var(--ink); padding:4px 10px; cursor:pointer;
+  }
+  input:focus-visible, button:focus-visible { outline:3px solid var(--yellow); outline-offset:2px; }
+  #submit {
+    width:100%; margin-top:20px; min-height:52px; font:inherit; font-size:17px; font-weight:bold; color:#fff; cursor:pointer;
+    background:var(--blue); border:3px solid var(--blue-dark); border-radius:0; box-shadow:0 5px 0 var(--blue-dark);
+  }
+  #submit:active:not(:disabled) { transform:translateY(4px); box-shadow:0 1px 0 var(--blue-dark); }
+  #submit:disabled { opacity:.65; cursor:progress; }
+  .msg { margin:14px 0 0; padding:10px 12px; border:2px solid currentColor; font-size:14px; }
+  .msg.error { color:var(--red); background:var(--red-soft); }
+  .help { margin:16px 0 0; font-size:13px; color:var(--muted); text-align:center; }
+  [hidden] { display:none !important; }
+  @media (prefers-reduced-motion: reduce) { #submit:active:not(:disabled) { transform:none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <img src="logo.png" alt="Siconverse" width="380" height="89">
+    <p class="tagline">เกมจำลองสถานการณ์การขอคำปรึกษาทางการแพทย์</p>
+  </div>
+  <form class="card" id="form" method="post" action="#" novalidate>
+    <h1>เข้าสู่ระบบ</h1>
+    <label for="username">ชื่อผู้ใช้</label>
+    <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+    <label for="password">รหัสผ่าน</label>
+    <div class="field">
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button type="button" id="toggle" aria-controls="password" aria-pressed="false">แสดง</button>
+    </div>
+    <p class="msg error" id="error" role="alert" hidden></p>
+    <button type="submit" id="submit">เข้าสู่เกม</button>
+    <p class="help">ติดต่ออาจารย์ผู้สอนเพื่อขอชื่อผู้ใช้และรหัสผ่าน</p>
+  </form>
+</main>
+<script src="auth.js?v=1"></script>
+<script src="credentials.js"></script>
+<script>
+(function () {
+  var Auth = window.SiconverseAuth;
+  var cfg = window.SICONVERSE_LOGIN;
+  var params = new URLSearchParams(location.search);
+  var next = Auth.safeNext(params.get('next'));
+  var $ = function (id) { return document.getElementById(id); };
+
+  function showError(text) { var e = $('error'); e.textContent = text; e.hidden = false; }
+
+  if (!cfg || !cfg.hash) { showError('ระบบยังไม่พร้อม กรุณาติดต่อผู้ดูแล'); $('submit').disabled = true; return; }
+  if (Auth.isRemembered(window, cfg)) { location.replace(next); return; }
+
+  $('toggle').addEventListener('click', function () {
+    var pw = $('password'), show = pw.type === 'password';
+    pw.type = show ? 'text' : 'password';
+    this.textContent = show ? 'ซ่อน' : 'แสดง';
+    this.setAttribute('aria-pressed', String(show));
+  });
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = $('submit');
+    $('error').hidden = true;
+    btn.disabled = true; btn.textContent = 'กำลังตรวจสอบ...';
+    Auth.check($('username').value, $('password').value, cfg).then(function (ok) {
+      if (ok) { Auth.remember(window, cfg); location.replace(next); return; }
+      showError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      $('password').value = ''; $('password').focus();
+    }).catch(function () {
+      showError('เบราว์เซอร์นี้ไม่รองรับการเข้าสู่ระบบ กรุณาใช้ Chrome หรือ Safari รุ่นล่าสุด');
+    }).then(function () { btn.disabled = false; btn.textContent = 'เข้าสู่เกม'; });
+  });
+})();
+</script>
+</body>
+</html>
