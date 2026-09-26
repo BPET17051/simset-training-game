@@ -105,6 +105,13 @@ test('index gives slow connections 2 minutes per asset before starting the manif
   assert.match(html, /createjs\.LoadItem\.LOAD_TIMEOUT_DEFAULT = 120000;[\s\S]*?loader\.loadManifest\(/);
 });
 
+test('index downloads the start-up assets in parallel, not one by one', () => {
+  // LoadQueue defaults to maxConnections = 1, so the 28 start-up files loaded
+  // serially; 6 at a time measured ~2.2x faster on production (69 s -> 31.5 s on a slow link).
+  const html = readFileSync('index.html', 'utf8');
+  assert.match(html, /var loader = new createjs\.LoadQueue\(false\);\s*loader\.setMaxConnections\(6\);[\s\S]*?loader\.loadManifest\(/);
+});
+
 test('index keeps the original viewport, loads the helper first, and tunes the stage', () => {
   const html = readFileSync('index.html', 'utf8');
   // No viewport meta: it moved the canvas 52px on iPhone emulation (a visible layout change).

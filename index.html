@@ -98,6 +98,7 @@ function init() {
 	} catch(e) {};
 	createjs.LoadItem.LOAD_TIMEOUT_DEFAULT = 120000;
 	var loader = new createjs.LoadQueue(false);
+	loader.setMaxConnections(6);
 	loader.installPlugin(createjs.Sound);
 	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
 	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
