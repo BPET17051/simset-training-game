@@ -100,7 +100,9 @@
     var btn = $('submit');
     $('error').hidden = true;
     btn.disabled = true; btn.textContent = 'กำลังตรวจสอบ...';
-    Auth.check($('username').value, $('password').value, cfg).then(function (ok) {
+    Promise.resolve().then(function () {
+      return Auth.check($('username').value, $('password').value, cfg);
+    }).then(function (ok) {
       if (ok) { Auth.remember(window, cfg); location.replace(next); return; }
       showError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
       $('password').value = ''; $('password').focus();
