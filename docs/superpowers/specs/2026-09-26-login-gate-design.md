@@ -29,7 +29,7 @@ checks, no Vercel Middleware, no paid services, and the repo stays as it is.
 | Username matching | Case-insensitive, ignoring leading and trailing spaces (so students can type in lower case). The password is case-sensitive. |
 | Remember login | After a correct login the browser stores the current hash (`localStorage`, falling back to `sessionStorage`). The game checks that the stored value equals the current hash, so **changing the credentials logs everyone out**. There is no expiry otherwise. |
 | Game files | `Demo5.js`, `components/`, images and videos are unchanged. `index.html` gets **3 script tags** in `<head>` (the gate). This is necessary, because without it the game URL skips the login. |
-| Look | Pixel-art theme matching the game: `Assets/bg.jpg` background, chunky bordered card, blue pixel button, "Siconverse" wordmark (or `login/logo.png` once the ChatGPT-generated logo exists). Thai UI text. Works on phones. |
+| Look | Pixel-art theme matching the game: `Assets/bg.jpg` background, chunky bordered card, blue pixel button, and the Siconverse logo (`login/logo.png`, plus `login/icon.png` as the favicon and home-screen icon). Thai UI text. Works on phones. |
 | Cost | Free: static files only, nothing new on Vercel. |
 
 ## Architecture
@@ -81,9 +81,11 @@ checks, no Vercel Middleware, no paid services, and the repo stays as it is.
 
 - Full-screen `../Assets/bg.jpg` with a dark overlay, like the game framing.
 - Card: white, a 4px dark border, a hard offset shadow, and square pixel corners.
-- Wordmark "Siconverse": the pixel display font *Press Start 2P* (Google Fonts)
-  with a yellow-to-red gradient, a white outline and a navy shadow, matching the
-  game's title art. `login/logo.png` replaces it automatically when present.
+- Logo: `login/logo.png` (760x177 transparent PNG, shown at up to 380 px wide).
+  It was made from the teacher-approved ChatGPT artwork (a doctor character, a
+  yellow-to-red pixel "Siconverse" wordmark and a blue speech-bubble/cross tile);
+  the baked-in checkerboard was removed. `login/icon.png` (192x192) is the
+  speech-bubble tile.
 - Thai text uses the game's font stack (`'Google Sans', Tahoma, sans-serif`).
 - Fields: ชื่อผู้ใช้, รหัสผ่าน (with a show/hide toggle). Button **เข้าสู่เกม**
   (game blue `#1f6fe5`, a thick navy border, and a bottom shadow that presses in).
@@ -120,8 +122,7 @@ owner says **"ขึ้นเว็บจริงได้"**, then `main`.
 ## Out of scope
 
 Real protection of game files, server-side checks, rate limiting, a private repo,
-per-user accounts, logout, tracking, and generating the logo (done separately
-with ChatGPT).
+per-user accounts, logout, tracking.
 
 ## Superseded
 

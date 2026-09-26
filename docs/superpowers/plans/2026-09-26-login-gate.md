@@ -380,7 +380,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 
 ### Task 4: the login page
 
-**Files:** create `login/index.html`.
+**Files:** create `login/index.html`. The logo assets `login/logo.png` (760x177, transparent) and `login/icon.png` (192x192, used as the favicon and home-screen icon) are **already committed** on this branch; do not regenerate or edit them.
 
 - [ ] **Step 1: create `login/index.html`**
 
@@ -392,7 +392,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Siconverse - เข้าสู่ระบบ</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Google+Sans:regular,bold&subset=latin">
 <style>
   :root {
@@ -410,14 +411,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   body::before { content:""; position:fixed; inset:0; background:rgba(0,0,0,.55); }
   main { position:relative; width:100%; max-width:380px; }
   .brand { text-align:center; margin:0 0 18px; }
-  .brand img { display:block; max-width:100%; height:auto; margin:0 auto; image-rendering:pixelated; }
-  .wordmark {
-    font-family:'Press Start 2P', 'Courier New', monospace; font-size:clamp(20px, 7vw, 30px); line-height:1.3;
-    margin:0; letter-spacing:1px;
-    background:linear-gradient(180deg, var(--yellow) 0 45%, var(--orange) 55% 100%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(3px 4px 0 var(--ink));
-  }
+  .brand img { display:block; width:100%; max-width:380px; height:auto; margin:0 auto; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
   .tagline { margin:10px 0 0; color:#fff; font-size:14px; text-shadow:0 2px 0 #000, 0 0 6px #000; }
   .card { background:var(--card); border:4px solid var(--ink); box-shadow:8px 8px 0 rgba(0,0,0,.45); padding:22px 20px 20px; }
   h1 { font-size:20px; margin:0 0 16px; }
@@ -449,7 +443,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 <body>
 <main>
   <div class="brand">
-    <p class="wordmark" id="wordmark">Siconverse</p>
+    <img src="logo.png" alt="Siconverse" width="380" height="89">
     <p class="tagline">เกมจำลองสถานการณ์การขอคำปรึกษาทางการแพทย์</p>
   </div>
   <form class="card" id="form" method="post" action="#" novalidate>
@@ -575,13 +569,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 - ชื่อผู้ใช้ไม่สนตัวพิมพ์เล็ก/ใหญ่ ส่วนรหัสผ่านต้องพิมพ์ให้ตรงทุกตัว
 - ถ้ารหัสหลุดออกไป ให้เปลี่ยนทันทีด้วยขั้นตอนเดียวกัน
 
-## ใส่โลโก้ Siconverse (เมื่อได้ไฟล์แล้ว)
+## เปลี่ยนโลโก้ (ถ้ามีโลโก้ใหม่)
 
-1. บันทึกไฟล์โลโก้เป็น `login/logo.png` (แนะนำพื้นหลังโปร่งใส กว้างไม่เกิน 760px)
-2. ใน `login/index.html` เปลี่ยนบรรทัด
-   `<p class="wordmark" id="wordmark">Siconverse</p>`
-   เป็น
-   `<img src="logo.png" alt="Siconverse" width="380">`
+1. เตรียมไฟล์ PNG พื้นหลังโปร่งใสจริง (ระวังรูปจาก AI ที่มีลายตารางหมากรุกติดมาในภาพ ซึ่งไม่ใช่พื้นหลังโปร่งใส)
+2. แทนที่ไฟล์ `login/logo.png` (แนะนำกว้าง 760px) และ `login/icon.png` (192x192px)
 3. commit และ push ตามปกติ (ผ่าน Preview ก่อนขึ้นเว็บจริง)
 ```
 
@@ -594,4 +585,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 ## Out of scope
 
 Server-side protection, rate limiting, a private repo, logout, per-user accounts,
-tracking, and generating the logo image.
+tracking. The logo is done: `login/logo.png` and `login/icon.png` were made from the teacher-approved ChatGPT artwork (baked-in checkerboard removed, trimmed, resized).
