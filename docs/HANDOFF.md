@@ -80,6 +80,37 @@ removed feature and are kept only as history; do not act on their next steps.**
 The standalone claude.ai Artifact mockup (section 1) and the home-computer
 `upload-mockup/` folder are outside this repo and were not touched.
 
+## 0.3 Siconverse login (2026-09-26)
+
+A shared-credential login page in front of the game, branch `feature/login-gate`.
+
+- **Client-side only, by owner decision.** Technical users can bypass it (skip the
+  page or load game files directly). It exists as a login step for ordinary
+  students. There is no server-side check, no Vercel Middleware, no paid services,
+  and the repo stays public. The server-side design (revision 1) is kept in commit
+  `fb7d654` in case real protection is needed later.
+- Files: `login/auth.js` (logic, PBKDF2 via Web Crypto), `login/gate.js` (runs in
+  the game `<head>` and redirects to `/login/` if not remembered; fails open),
+  `login/index.html` (themed page with `login/logo.png` and `login/icon.png`),
+  `login/credentials.js` (generated: version, iterations, salt and hash only),
+  `tools/set-login.mjs` (owner tool). `index.html` has 3 added `<script>` tags
+  before CreateJS; `Demo5.js` is unchanged.
+- **Credentials are never stored in plaintext** in any file, commit or doc. The
+  teacher sets them about every 6 months; the owner runs
+  `node tools/set-login.mjs`, then commits `login/credentials.js`. Changing them
+  logs everyone out. The username is case-insensitive; the password is
+  case-sensitive. The Thai guide is `docs/LOGIN-ADMIN-TH.md`.
+- Spec: `docs/superpowers/specs/2026-09-26-login-gate-design.md` (rev 2). Plan:
+  `docs/superpowers/plans/2026-09-26-login-gate.md`.
+- Tests: `tests/login.test.mjs`, `tests/login-page.test.mjs` (a synchronous
+  Web Crypto failure must not freeze the button, commit `809e3c4`).
+- The logo art came from ChatGPT as RGB with a baked-in checkerboard; its
+  background was removed before resizing. Replacements must be real transparent
+  PNGs.
+- Working copy: `C:\Users\Apisit Tangla\.codex\worktrees\simset-training-game-login-gate`.
+  Codex reported filesystem corruption on drive D (2026-09-26), so do not use the
+  old clones on D.
+
 ## 1. Where things are
 
 | What | Where |
