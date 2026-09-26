@@ -1,154 +1,130 @@
-# Siconverse login gate: design
+# Siconverse login gate: design (revision 2, client-side)
 
-Date: 2026-09-26. Status: approved in chat, awaiting written-spec review.
+Date: 2026-09-26. Revision 2 replaces the server-side (Vercel Middleware) design
+of the same day at the owner's request. Status: awaiting owner approval, together
+with the implementation plan
+`docs/superpowers/plans/2026-09-26-login-gate.md`.
 
 ## Goal
 
-Put a single shared login in front of the SIMSET game at
-`https://simset-training-game.vercel.app` so that **only people who were given the
-credentials can play**. The owner does **not** need to know who plays: no
-per-user accounts, no tracking, no stored personal data.
+A login step for **ordinary students** before the SIMSET game at
+`https://simset-training-game.vercel.app`: one shared username and password for
+the whole cohort, remembered on the device after a successful login.
 
-## Decisions (made with the owner, 2026-09-26)
+## Accepted limitation (owner decision, 2026-09-26)
+
+The check runs in the browser. Anyone with technical knowledge can skip the login
+page or load the game files directly (the repo and site are public). The owner
+explicitly accepted this. The goal of this phase is a normal login step for
+ordinary students, not protection against determined users. No server-side
+checks, no Vercel Middleware, no paid services, and the repo stays as it is.
+
+## Decisions
 
 | Topic | Decision |
 |---|---|
-| Purpose | Keep outsiders out only (no identity, no analytics). |
-| Credentials | One shared username + password for the whole cohort. The teacher sets a new pair about every 6 months and asks the owner to apply it. |
-| Current values | Chosen by the teacher and given to the owner in person. The password is 6 characters. **Neither the username nor the password may be written in the repo, specs, plans, tests or commits** (the repo is public until step 3 of the rollout). Both live only in Vercel environment variables. |
-| Password length | Teacher insists on 6 characters. Compensate with server-side rate limiting on login attempts. |
-| Session length | Stay logged in until the password changes (cookie max-age 200 days). Changing the password invalidates every existing session. |
-| Mechanism | Vercel Routing Middleware (`middleware.js` at repo root), free on the Hobby plan. Rejected: client-side JS check (a public repo makes it useless) and Vercel Password Protection (paid add-on, no username, cannot be themed). |
-| Game files | Unchanged. `index.html`, `Demo5.js`, `components/`, images and videos stay as they are. |
-| Login page look | New page, themed like the game using existing assets (`Assets/bg.jpg`, the game's colours and font). App name **Siconverse**. A logo image will be generated separately; until then the name is shown as styled text. |
-| Repo visibility | **Must become private before launch.** A public repo lets anyone download and run the whole game without the login. This is an owner action on GitHub (confirmed separately at that step). |
+| Mechanism | Client-side check only; static files on the free Vercel plan. |
+| Credentials | One shared username and password, set by the teacher about every 6 months. The owner applies them with a local script. |
+| Storage of credentials | **Never in plaintext.** The repo holds only `login/credentials.js`, which contains a random salt, the iteration count and a PBKDF2-SHA256 hash of `username + "\n" + password`. The real values are never written to the repo, docs, plans, tests or commits. |
+| Username matching | Case-insensitive, ignoring leading and trailing spaces (so students can type in lower case). The password is case-sensitive. |
+| Remember login | After a correct login the browser stores the current hash (`localStorage`, falling back to `sessionStorage`). The game checks that the stored value equals the current hash, so **changing the credentials logs everyone out**. There is no expiry otherwise. |
+| Game files | `Demo5.js`, `components/`, images and videos are unchanged. `index.html` gets **3 script tags** in `<head>` (the gate). This is necessary, because without it the game URL skips the login. |
+| Look | Pixel-art theme matching the game: `Assets/bg.jpg` background, chunky bordered card, blue pixel button, "Siconverse" wordmark (or `login/logo.png` once the ChatGPT-generated logo exists). Thai UI text. Works on phones. |
+| Cost | Free: static files only, nothing new on Vercel. |
 
 ## Architecture
 
 ```
-browser ──► Vercel edge ──► middleware.js ──► static files (game, login page)
-                               │
-                               ├─ valid session cookie ─────────► continue
-                               ├─ public login assets ──────────► continue
-                               ├─ POST /login (form) ───────────► check, set cookie, redirect
-                               ├─ page request, no session ─────► 302 /login/?next=<path>
-                               └─ asset request, no session ────► 401
+/ (index.html = game)            /login/ (login page)
+  <head>                           form ─► SiconverseAuth.check()
+    login/auth.js                          ├─ wrong ─► Thai error
+    login/credentials.js                   └─ right ─► remember(hash)
+    login/gate.js ── not remembered ──►        location.replace(next || "/")
+  </head>          location.replace("/login/?next=…")
 ```
 
 ### Units
 
-1. **`middleware.js`** (repo root, Edge runtime, default export). All request
-   handling. It exports small pure helpers (`sessionToken`, `isPublicPath`,
-   `safeNext`, `isPageRequest`) so that they can be unit-tested. It depends on
-   `next()` from `@vercel/functions`, the documented way to continue a request in
-   non-Next.js projects, so a `package.json` is added.
-2. **`login/index.html`** (+ optional `login/logo.png`). Static, self-contained
-   themed page. A plain `<form method="POST" action="/login">` works without
-   JavaScript. A tiny inline script only shows error text and the show-password
-   toggle.
-3. **Vercel configuration (not code):** environment variables
-   `SICONVERSE_USER`, `SICONVERSE_PASS` and `SICONVERSE_SECRET` (a random ≥32-byte
-   value, generated once), set for Production and Preview. One Vercel Firewall
-   rate-limit rule on `POST /login`.
-4. **`docs/LOGIN-ADMIN-TH.md`**: Thai, step-by-step guide for the owner: first
-   setup, changing the password every 6 months, the firewall rule, and where to
-   put the logo.
+1. **`login/auth.js`**: a UMD module (`window.SiconverseAuth`, usable from Node
+   tests) with pure logic: `derive(username, password, cfg)` (PBKDF2 via Web
+   Crypto), `check()`, `isRemembered(cfg)`, `remember(cfg)`, `safeNext(next)`,
+   `loginUrl(location)`. It has no DOM access except `location` and storage
+   passed in.
+2. **`login/credentials.js`**: generated, no plaintext:
+   `window.SICONVERSE_LOGIN = {version, iterations, salt, hash}`.
+3. **`login/gate.js`**: runs synchronously in the game's `<head>` before CreateJS
+   loads. If not remembered, it calls `location.replace(loginUrl)` before any
+   game asset starts downloading.
+   - Fails **open** if `credentials.js` did not load or storage is unusable in
+     this browser. A network hiccup or a privacy mode must never lock students out
+     or cause a redirect loop. This is consistent with the accepted limitation.
+4. **`login/index.html`**: the themed login page (inline CSS and JS). If the
+   device is already remembered it forwards immediately.
+5. **`tools/set-login.mjs`**: an owner-run Node script. It asks for the username
+   and password interactively (input is not echoed, and nothing is passed as
+   command-line arguments that could land in shell history). It generates a new
+   random salt and writes `login/credentials.js`, bumping `version`.
+6. **`docs/LOGIN-ADMIN-TH.md`**: a Thai guide covering first setup, changing
+   credentials every 6 months, and adding the logo.
 
-### Session token
+### Parameters
 
-`token = base64url(HMAC-SHA256(key = SICONVERSE_SECRET, msg = "v1|" + USER + "|" + PASS))`
-
-- Stored in cookie `sc_session`: `HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=17280000`.
-- Verification recomputes the token and compares in constant time. Changing
-  USER, PASS or SECRET changes the token, so all old cookies stop working.
-- No server-side session storage is needed.
-
-### Request rules
-
-| Request | Result |
-|---|---|
-| Any path with a valid `sc_session` | continue |
-| `GET /login`, `/login/`, `/login/*`, `/Assets/bg.jpg`, `/favicon.ico` | continue (public) |
-| `POST /login` with correct username **and** password (constant-time compare) | `Set-Cookie`, `303` to `safeNext(next)` (a same-site path starting with a single `/`, otherwise `/`) |
-| `POST /login` wrong | wait ~1 s, `303` to `/login/?e=1&next=…` |
-| Unauthenticated page request (`GET`, `Accept` contains `text/html`) | `302` to `/login/?next=<path+query>` |
-| Unauthenticated anything else (JS, images, video, range requests) | `401`, `Cache-Control: no-store` |
-| Env vars missing | fail closed: `503` with a Thai message; never let traffic through |
-
-Login-page responses and redirects use `Cache-Control: no-store`. The page also
-sends `X-Robots-Tag: noindex`.
-
-### Rate limiting (compensates for the 6-character password)
-
-- **Primary:** a Vercel Firewall custom rule: path `/login`, method `POST`,
-  action `rate_limit`, key `ip`, about **5 requests per 60 s**, with the excess
-  denied for 15 minutes. The implementer must first confirm this is available on
-  the project's current (Hobby) plan.
-- **If it is not available on Hobby:** stop and ask the owner. The fallback is a
-  shared counter in Upstash Redis (free tier via the Vercel Marketplace), which
-  needs an extra account and environment variables.
-- The ~1 s delay on wrong attempts stays in either case.
+- PBKDF2-SHA256, 150,000 iterations, 16-byte random salt, 32-byte output,
+  base64. This takes about 0.1-0.3 s on a phone, once per login. It slows offline
+  guessing of the short password from the public hash. It does not prevent it,
+  which is part of the accepted limitation.
+- Storage key `siconverse-auth`.
+- `safeNext` accepts only same-site paths that start with a single `/` (it
+  rejects `//x`, `/\x` and absolute URLs). The default is `/`.
 
 ## Login page design
 
-- Full-screen `Assets/bg.jpg` (the game's ER room) under a dark translucent
-  overlay, like the game's own framing.
-- Centred white card with a thick dark border and a hard offset shadow (the
-  pixel-UI look of the game), and the game's font **Google Sans** with Tahoma
-  fallback.
-- Logo slot: `login/logo.png` if it exists. Otherwise the wordmark "Siconverse"
-  in a yellow-to-red gradient with a white outline, matching the game's title
-  lettering.
-- Fields: Username, Password (with a show/hide toggle). Button **เข้าสู่เกม** in
-  the game's blue pixel style.
-- Thai error "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" when `?e=1`. Helper text
-  "ติดต่ออาจารย์ผู้สอนเพื่อขอรหัสเข้าใช้งาน".
-- Works at phone width (no horizontal scroll), keyboard accessible, visible focus.
+- Full-screen `../Assets/bg.jpg` with a dark overlay, like the game framing.
+- Card: white, a 4px dark border, a hard offset shadow, and square pixel corners.
+- Wordmark "Siconverse": the pixel display font *Press Start 2P* (Google Fonts)
+  with a yellow-to-red gradient, a white outline and a navy shadow, matching the
+  game's title art. `login/logo.png` replaces it automatically when present.
+- Thai text uses the game's font stack (`'Google Sans', Tahoma, sans-serif`).
+- Fields: ชื่อผู้ใช้, รหัสผ่าน (with a show/hide toggle). Button **เข้าสู่เกม**
+  (game blue `#1f6fe5`, a thick navy border, and a bottom shadow that presses in).
+- States: checking ("กำลังตรวจสอบ..."), error ("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"),
+  not configured ("ระบบยังไม่พร้อม กรุณาติดต่อผู้ดูแล").
+- Helper text: "ติดต่ออาจารย์ผู้สอนเพื่อขอชื่อผู้ใช้และรหัสผ่าน".
+- Responsive (the card fits 320 px wide; scrolls on short landscape phones), with
+  visible keyboard focus and labelled inputs.
 
 ## Testing
 
-- **Unit (`node --test`):** token is deterministic and changes when USER, PASS or
-  SECRET changes; `safeNext` rejects `//evil.com`, `https://…` and
-  `/\evil`; public-path list; page vs asset detection; middleware decisions for
-  every row of the request-rules table (build `Request` objects, check status,
-  `Location` and `Set-Cookie`, with `next()` detected by its response header);
-  missing env gives 503.
-- **Preview deployment (env vars set for Preview):**
-  - `/` without a cookie redirects to `/login/`.
-  - `/Demo5.js` and `/videos/family.mp4` return 401 without a cookie.
-  - Wrong login shows the Thai error; right login reaches the game.
-  - With the cookie, a `Range: bytes=0-1000` request on a video returns `206`, and
-    the game plays through the intro video.
-  - Changing `SICONVERSE_PASS` and redeploying forces a new login.
-- **Regression:** existing `tests/ios-smooth.test.cjs` and
-  `tests/performance-assets.test.cjs` still pass, and `Demo5.js` keeps its
-  original blob hash.
-- **Usage:** a week after launch, check Vercel Usage (middleware / edge
-  requests) against the Hobby quota.
+- **Unit (`node --test`):** `derive` is deterministic, normalises the username,
+  and is case-sensitive for the password; `check` passes and fails correctly; the
+  output of `buildCredentials` has no plaintext and changes with the salt;
+  `isRemembered` becomes false after rotation; `safeNext` and `loginUrl` cases;
+  the gate decision including fail-open cases.
+- **Static checks:** `index.html` has the three tags in `<head>` before
+  `createjs.min.js`; `Demo5.js` keeps its original hash; `login/credentials.js`
+  has the expected shape.
+- **Preview (after the owner generates real credentials):** first visit to `/`
+  goes to `/login/`; a wrong password shows the error; the right one opens the
+  game, and a reload stays in; a lower-case username works; after regenerating
+  the credentials the game asks for login again; 375-px phone layout; no console
+  errors.
+- **Regression:** `tests/ios-smooth.test.cjs` and
+  `tests/performance-assets.test.cjs` still pass.
 
 ## Rollout
 
-1. Build on branch `feature/login-gate` and verify on the Vercel preview.
-2. The owner sets the Production env vars in Vercel (Codex never sees the password).
-3. The owner confirms, then the repo is made private
-   (`gh repo edit … --visibility private`). Confirm Vercel still deploys, including
-   the Git LFS videos.
-4. The owner says **"ขึ้นเว็บจริงได้"**, then fast-forward `main` and verify production.
-5. Add the firewall rule, then verify that 6 fast wrong attempts get blocked.
+Feature branch `feature/login-gate`, then the owner runs `tools/set-login.mjs`
+and commits `login/credentials.js`, then the Vercel preview is checked, then the
+owner says **"ขึ้นเว็บจริงได้"**, then `main`.
 
 ## Out of scope
 
-Per-user accounts, logout button, "who played" tracking, password reset flow,
-changing the game, and generating the logo (done separately with ChatGPT; the
-prompt is in the chat of 2026-09-26).
+Real protection of game files, server-side checks, rate limiting, a private repo,
+per-user accounts, logout, tracking, and generating the logo (done separately
+with ChatGPT).
 
-## Risks and notes
+## Superseded
 
-- The Hobby plan is for personal, non-commercial use. The owner or client must
-  confirm eligibility with Vercel. This applies to the project whether or not the
-  login is built.
-- The 6-character password derived from the username is guessable. Rate limiting
-  reduces online guessing but does not stop a leaked password; rotation (every
-  6 months, or at once if it leaks) is the remedy.
-- `package.json` makes Vercel run an install step, so the first preview build
-  must succeed before merging.
+Revision 1 (Vercel Routing Middleware, HMAC cookie, firewall rate limit, private
+repo) is kept in git history (commit `fb7d654`) in case real protection is needed
+later.
